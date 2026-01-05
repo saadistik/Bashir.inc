@@ -156,13 +156,13 @@ export const TussleDetail = () => {
         transition={{ delay: 0.1 }}
         className="glass-panel p-2"
       >
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide">
           {TABS.map((tab) => (
             <motion.button
               key={tab}
               onClick={() => setActiveTab(tab)}
               whileTap={{ scale: 0.95 }}
-              className={`flex-1 py-3 px-6 rounded-xl font-medium capitalize transition-all relative ${
+              className={`flex-shrink-0 py-2.5 px-5 sm:py-3 sm:px-6 rounded-xl font-medium capitalize transition-all relative text-sm sm:text-base ${
                 activeTab === tab
                   ? 'text-white'
                   : 'text-slate-300 hover:text-white hover:bg-white/5'
@@ -242,7 +242,14 @@ const OverviewTab = ({ tussle }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-slate-300">Sell Price</span>
+              <span className="text-slate-300">Order Details</span>
+              <span className="text-sm text-slate-400">
+                {tussle?.quantity || 0} pieces × {formatCurrency(tussle?.price_per_piece || 0)}/piece
+              </span>
+            </div>
+            
+            <div className="flex items-center justify-between">
+              <span className="text-slate-300">Total Revenue</span>
               <span className="text-xl font-bold text-white">
                 {formatCurrency(tussle?.sell_price || 0)}
               </span>

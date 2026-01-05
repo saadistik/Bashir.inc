@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 import { Calendar as CalendarIcon, Plus } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns'
 import { supabase } from '../lib/supabase'
@@ -10,10 +11,11 @@ export const Calendar = () => {
   const [tussleDeadlines, setTussleDeadlines] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState(null)
+  const location = useLocation()
 
   useEffect(() => {
     fetchCalendarData()
-  }, [])
+  }, [location.pathname])
 
   const fetchCalendarData = async () => {
     try {

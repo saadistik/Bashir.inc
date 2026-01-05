@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 import { Users, Phone, Briefcase } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency } from '../lib/utils'
@@ -7,10 +8,11 @@ import { formatCurrency } from '../lib/utils'
 export const Workers = () => {
   const [workers, setWorkers] = useState([])
   const [loading, setLoading] = useState(true)
+  const location = useLocation()
 
   useEffect(() => {
     fetchWorkers()
-  }, [])
+  }, [location.pathname])
 
   const fetchWorkers = async () => {
     try {

@@ -180,7 +180,8 @@ export const CompanyDetail = () => {
 const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '',
-    sell_price: '',
+    quantity: '',
+    price_per_piece: '',
     due_date: '',
   })
   const [imageFile, setImageFile] = useState(null)
@@ -188,6 +189,11 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const navigate = useNavigate()
+
+  // Calculate total price
+  const totalPrice = formData.quantity && formData.price_per_piece 
+    ? parseFloat(formData.quantity) * parseFloat(formData.price_per_piece)
+    : 0
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -228,6 +234,31 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
 
       const { data, error } = await supabase
         .from('tussles')
+        .insert([{
+          company_id: companyId,
+          name: formData.name,
+          quantity: parseInt(formData.quantity),
+          price_per_piece: parseFloat(formData.price_per_piece),
+          sell_price: totalPrice,
+          due_date: formData.due_date || null,
+          image_url: imageUrl,
+          status: 'pending',
+        }])
+        .select()
+        .single()
+
+      if (error) throw error
+
+      // Redirect to the new tussle detail page
+      navigate(`/tussles/${data.id}`)
+    } catch (error) {
+      console.error('Error creating tussle:', error)
+      alert(error.message || 'Error creating tussle. Please try again.')
+    } finally {
+      setSaving(false)
+      setUploading(false)
+    }
+  }
         .insert([{
           company_id: companyId,
           name: formData.name,
@@ -284,21 +315,45 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">
-              Sell Price (PKR) *
-            </label>
-            <input
-              type="number"
-              value={formData.sell_price}
-              onChange={(e) => setFormData({ ...formData, sell_price: e.target.value })}
-              className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
-              placeholder="50000"
-              required
-              min="0"
-              step="0.01"
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-slate-200 mb-2">
+                Quantity *
+              </label>
+              <input
+                type="number"
+                value={formData.quantity}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
+                placeholder="100"
+                required
+                min="1"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-200 mb-2">
+                Price Per Piece (PKR) *
+              </label>
+              <input
+                type="number"
+                value={formData.price_per_piece}
+                onChange={(e) => setFormData({ ...formData, price_per_piece: e.target.value })}
+                className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
+                placeholder="500"
+                required
+                min="0"
+                step="0.01"
+              />
+            </div>
           </div>
+
+          {totalPrice > 0 && (
+            <div className="glass-panel p-4 bg-nature-teal/20 border border-nature-teal/30">
+              <p className="text-sm text-slate-300">Total Order Value</p>
+              <p className="text-2xl font-bold text-white">{formatCurrency(totalPrice)}</p>
+            </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">

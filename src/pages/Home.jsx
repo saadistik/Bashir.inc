@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Package, Clock, TrendingUp } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency, formatDate } from '../lib/utils'
@@ -10,10 +10,11 @@ export const Home = () => {
   const [stats, setStats] = useState({ pending: 0, completed: 0, revenue: 0 })
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [location.pathname])
 
   const fetchData = async () => {
     try {
