@@ -139,52 +139,55 @@ export const AppLayout = () => {
 
       {/* Mobile Bottom Dock */}
       <div className="md:hidden">
-        <motion.nav
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-md"
-        >
-          <div className="glass-panel px-2 py-2.5 flex items-center justify-around gap-1 shadow-2xl">
-            {filteredNavItems.slice(0, 4).map((item, index) => {
-              const Icon = item.icon
-              const isActive = location.pathname === item.path
+        {/* Flexbox Wrapper - Full width, centered content */}
+        <div className="fixed bottom-6 left-0 right-0 z-[60] flex justify-center pointer-events-none px-4">
+          <motion.nav
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="w-full max-w-md pointer-events-auto"
+          >
+            <div className="glass-panel px-2 py-2.5 flex items-center justify-around gap-1 shadow-2xl">
+              {filteredNavItems.slice(0, 4).map((item, index) => {
+                const Icon = item.icon
+                const isActive = location.pathname === item.path
+                
+                return (
+                  <motion.button
+                    key={item.path}
+                    onClick={() => navigate(item.path)}
+                    whileTap={{ scale: 0.9 }}
+                    className={`relative p-2.5 rounded-xl transition-all flex-1 ${
+                      isActive 
+                        ? 'bg-white/20 text-white' 
+                        : 'text-slate-200'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 mx-auto" />
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeMobileTab"
+                        className="absolute inset-0 bg-gradient-to-r from-nature-teal/30 to-nature-mint/30 rounded-2xl -z-10"
+                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                      />
+                    )}
+                  </motion.button>
+                )
+              })}
               
-              return (
-                <motion.button
-                  key={item.path}
-                  onClick={() => navigate(item.path)}
-                  whileTap={{ scale: 0.9 }}
-                  className={`relative p-2.5 rounded-xl transition-all flex-1 ${
-                    isActive 
-                      ? 'bg-white/20 text-white' 
-                      : 'text-slate-200'
-                  }`}
-                >
-                  <Icon className="w-5 h-5 mx-auto" />
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeMobileTab"
-                      className="absolute inset-0 bg-gradient-to-r from-nature-teal/30 to-nature-mint/30 rounded-2xl -z-10"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                  )}
-                </motion.button>
-              )
-            })}
-            
-            <motion.button
-              onClick={() => navigate('/profile')}
-              whileTap={{ scale: 0.9 }}
-              className={`relative p-2.5 rounded-xl transition-all flex-1 ${
-                location.pathname === '/profile'
-                  ? 'bg-white/20 text-white' 
-                  : 'text-slate-200'
-              }`}
-            >
-              <User className="w-5 h-5 mx-auto" />
-            </motion.button>
-          </div>
-        </motion.nav>
+              <motion.button
+                onClick={() => navigate('/profile')}
+                whileTap={{ scale: 0.9 }}
+                className={`relative p-2.5 rounded-xl transition-all flex-1 ${
+                  location.pathname === '/profile'
+                    ? 'bg-white/20 text-white' 
+                    : 'text-slate-200'
+                }`}
+              >
+                <User className="w-5 h-5 mx-auto" />
+              </motion.button>
+            </div>
+          </motion.nav>
+        </div>
 
         {/* Floating Add Button */}
         {profile?.role === 'employee' && (
