@@ -35,10 +35,10 @@ export const AppLayout = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden animated-gradient">
-      {/* Floating Colorful Orbs */}
+    <div className="min-h-screen relative overflow-hidden bg-slate-950">
+      {/* Floating Colorful Orbs - Subtle accents */}
       <motion.div
-        className="fixed top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-300/10 to-blue-300/10 rounded-full blur-3xl -z-10"
+        className="fixed top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full blur-3xl -z-10"
         animate={{
           x: [0, 100, 0],
           y: [0, 50, 0],
@@ -51,7 +51,7 @@ export const AppLayout = () => {
         }}
       />
       <motion.div
-        className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-pink-300/8 to-rose-300/8 rounded-full blur-3xl -z-10"
+        className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-emerald-600/15 to-teal-600/15 rounded-full blur-3xl -z-10"
         animate={{
           x: [0, -80, 0],
           y: [0, 80, 0],
@@ -65,7 +65,7 @@ export const AppLayout = () => {
         }}
       />
       <motion.div
-        className="fixed top-1/2 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-300/8 to-teal-300/8 rounded-full blur-3xl -z-10"
+        className="fixed top-1/2 left-1/3 w-72 h-72 bg-gradient-to-br from-pink-600/10 to-rose-600/10 rounded-full blur-3xl -z-10"
         animate={{
           x: [0, -60, 0],
           y: [0, 70, 0],
@@ -98,15 +98,15 @@ export const AppLayout = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`relative px-5 py-3 rounded-xl transition-all ${
                     isActive 
-                      ? 'bg-purple-500/20 text-purple-800' 
-                      : 'text-gray-800 hover:bg-purple-500/10'
+                      ? 'bg-white/20 text-white' 
+                      : 'text-slate-300 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl -z-10"
+                      className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-emerald-600/30 rounded-xl -z-10"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -119,7 +119,7 @@ export const AppLayout = () => {
             <motion.button
               onClick={handleLogout}
               whileTap={{ scale: 0.95 }}
-              className="px-5 py-3 rounded-xl text-gray-800 hover:bg-red-500/10 hover:text-red-700 transition-all"
+              className="px-5 py-3 rounded-xl text-slate-300 hover:bg-red-500/20 hover:text-red-400 transition-all"
             >
               <LogOut className="w-5 h-5" />
             </motion.button>
@@ -164,15 +164,15 @@ export const AppLayout = () => {
                     whileTap={{ scale: 0.9 }}
                     className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                       isActive 
-                        ? 'bg-purple-500/20 text-purple-800' 
-                        : 'text-gray-800'
+                        ? 'bg-white/20 text-white' 
+                        : 'text-slate-400 hover:text-white'
                     }`}
                   >
                     <Icon className="w-5 h-5 mx-auto" />
                     {isActive && (
                       <motion.div
                         layoutId="activeMobileTab"
-                        className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl -z-10"
+                        className="absolute inset-0 bg-gradient-to-r from-purple-600/30 to-emerald-600/30 rounded-2xl -z-10"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -185,8 +185,8 @@ export const AppLayout = () => {
                 whileTap={{ scale: 0.9 }}
                 className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                   location.pathname === '/profile'
-                    ? 'bg-purple-500/20 text-purple-700' 
-                    : 'text-gray-600'
+                    ? 'bg-white/20 text-white' 
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <User className="w-5 h-5 mx-auto" />
@@ -201,7 +201,7 @@ export const AppLayout = () => {
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
-            className="fixed bottom-[5.5rem] right-6 z-[60] w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full shadow-lg shadow-purple-500/40 flex items-center justify-center animate-float"
+            className="fixed bottom-[5.5rem] right-6 z-[60] w-14 h-14 bg-gradient-to-br from-purple-600 to-emerald-600 rounded-full shadow-lg shadow-purple-500/50 flex items-center justify-center animate-float"
           >
             <Plus className="w-7 h-7 text-white" />
           </motion.button>
@@ -214,7 +214,7 @@ export const AppLayout = () => {
           onClick={handleAddClick}
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.05 }}
-          className="hidden md:flex fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full shadow-lg shadow-purple-500/40 items-center justify-center animate-float"
+          className="hidden md:flex fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-600 to-emerald-600 rounded-full shadow-lg shadow-purple-500/50 items-center justify-center animate-float"
         >
           <Plus className="w-8 h-8 text-white" />
         </motion.button>

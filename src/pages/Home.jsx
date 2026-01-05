@@ -83,11 +83,11 @@ export const Home = () => {
           className="glass-panel p-3.5 md:p-6"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2.5 md:p-3 bg-nature-teal/30 rounded-xl md:rounded-2xl flex-shrink-0">
-              <Package className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
+            <div className="p-2.5 md:p-3 bg-emerald-500/20 rounded-xl md:rounded-2xl flex-shrink-0">
+              <Package className="w-5 h-5 md:w-6 md:h-6 text-emerald-400" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Pending Orders</p>
+              <p className="text-slate-300 text-xs md:text-sm mb-0.5">Pending Orders</p>
               <p className="text-2xl md:text-3xl font-bold text-white">{stats.pending}</p>
             </div>
           </div>
@@ -100,11 +100,11 @@ export const Home = () => {
           className="glass-panel p-3.5 md:p-6"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2.5 md:p-3 bg-nature-gold/30 rounded-xl md:rounded-2xl flex-shrink-0">
-              <Clock className="w-5 h-5 md:w-6 md:h-6 text-nature-gold" />
+            <div className="p-2.5 md:p-3 bg-purple-500/20 rounded-xl md:rounded-2xl flex-shrink-0">
+              <Clock className="w-5 h-5 md:w-6 md:h-6 text-purple-400" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Completed</p>
+              <p className="text-slate-300 text-xs md:text-sm mb-0.5">Completed</p>
               <p className="text-2xl md:text-3xl font-bold text-white">{stats.completed}</p>
             </div>
           </div>
@@ -117,11 +117,11 @@ export const Home = () => {
           className="glass-panel p-3.5 md:p-6"
         >
           <div className="flex items-center gap-3">
-            <div className="p-2.5 md:p-3 bg-nature-mint/30 rounded-xl md:rounded-2xl flex-shrink-0">
-              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
+            <div className="p-2.5 md:p-3 bg-blue-500/20 rounded-xl md:rounded-2xl flex-shrink-0">
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-blue-400" />
             </div>
             <div className="min-w-0 overflow-hidden flex-1">
-              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Total Revenue</p>
+              <p className="text-slate-300 text-xs md:text-sm mb-0.5">Total Revenue</p>
               <p className="text-base md:text-2xl font-bold text-white break-all">{formatCurrency(stats.revenue)}</p>
             </div>
           </div>
@@ -144,7 +144,7 @@ export const Home = () => {
               transition={{ delay: 0.5 + index * 0.05 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => navigate(`/tussles/${tussle.id}`)}
-              className="glass-panel p-3.5 md:p-5 cursor-pointer hover:shadow-glow-teal transition-all"
+              className="glass-panel p-3.5 md:p-5 cursor-pointer hover:border-emerald-500/40 transition-all"
             >
               {tussle.image_url && (
                 <img
@@ -153,10 +153,10 @@ export const Home = () => {
                   className="w-full h-28 md:h-32 object-cover rounded-lg md:rounded-xl mb-2 md:mb-3"
                 />
               )}
-              <h3 className="text-base md:text-lg font-semibold text-white mb-1">{ tussle.name}</h3>
+              <h3 className="text-base md:text-lg font-semibold text-white mb-1">{tussle.name}</h3>
               <p className="text-xs md:text-sm text-slate-300 mb-2">{tussle.companies?.name}</p>
               <div className="flex items-center justify-between text-xs md:text-sm">
-                <span className="text-nature-mint font-medium">{formatCurrency(tussle.sell_price)}</span>
+                <span className="text-emerald-400 font-medium">{formatCurrency(tussle.sell_price)}</span>
                 {tussle.due_date && (
                   <span className="text-slate-400">{formatDate(tussle.due_date)}</span>
                 )}
@@ -187,7 +187,7 @@ export const Home = () => {
                     <p className="text-sm md:text-base text-white font-medium truncate">{tussle.name}</p>
                     <p className="text-xs md:text-sm text-slate-300 truncate">{tussle.companies?.name}</p>
                   </div>
-                  <span className="text-xs md:text-sm text-nature-gold font-medium whitespace-nowrap">{formatDate(tussle.due_date)}</span>
+                  <span className="text-xs md:text-sm text-purple-400 font-medium whitespace-nowrap">{formatDate(tussle.due_date)}</span>
                 </motion.div>
               ))}
             </div>
