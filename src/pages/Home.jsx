@@ -135,7 +135,7 @@ export const Home = () => {
         transition={{ delay: 0.4 }}
       >
         <h2 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Pending Orders</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="space-y-3 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-4 md:space-y-0">
           {tussles.filter(t => t.status === 'pending').map((tussle, index) => (
             <motion.div
               key={tussle.id}
@@ -144,19 +144,19 @@ export const Home = () => {
               transition={{ delay: 0.5 + index * 0.05 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => navigate(`/tussles/${tussle.id}`)}
-              className="glass-panel p-5 cursor-pointer hover:shadow-glow-teal transition-all"
+              className="glass-panel p-3.5 md:p-5 cursor-pointer hover:shadow-glow-teal transition-all"
             >
               {tussle.image_url && (
                 <img
                   src={tussle.image_url}
                   alt={tussle.name}
-                  className="w-full h-32 object-cover rounded-xl mb-3"
+                  className="w-full h-28 md:h-32 object-cover rounded-lg md:rounded-xl mb-2 md:mb-3"
                 />
               )}
-              <h3 className="text-lg font-semibold text-white mb-1">{tussle.name}</h3>
-              <p className="text-sm text-slate-300 mb-2">{tussle.companies?.name}</p>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-nature-mint">{formatCurrency(tussle.sell_price)}</span>
+              <h3 className="text-base md:text-lg font-semibold text-white mb-1">{ tussle.name}</h3>
+              <p className="text-xs md:text-sm text-slate-300 mb-2">{tussle.companies?.name}</p>
+              <div className="flex items-center justify-between text-xs md:text-sm">
+                <span className="text-nature-mint font-medium">{formatCurrency(tussle.sell_price)}</span>
                 {tussle.due_date && (
                   <span className="text-slate-400">{formatDate(tussle.due_date)}</span>
                 )}
@@ -174,20 +174,20 @@ export const Home = () => {
           transition={{ delay: 0.6 }}
         >
           <h2 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Upcoming Deadlines</h2>
-          <div className="glass-panel p-6">
-            <div className="space-y-3">
+          <div className="glass-panel p-4 md:p-6">
+            <div className="space-y-2.5 md:space-y-3">
               {upcomingDeadlines.map((tussle) => (
                 <motion.div
                   key={tussle.id}
                   whileHover={{ x: 5 }}
                   onClick={() => navigate(`/tussles/${tussle.id}`)}
-                  className="flex items-center justify-between p-3 bg-white/5 rounded-xl cursor-pointer hover:bg-white/10 transition-all"
+                  className="flex items-center justify-between p-2.5 md:p-3 bg-white/5 rounded-lg md:rounded-xl cursor-pointer hover:bg-white/10 transition-all"
                 >
-                  <div>
-                    <p className="text-white font-medium">{tussle.name}</p>
-                    <p className="text-sm text-slate-300">{tussle.companies?.name}</p>
+                  <div className="min-w-0 flex-1 mr-3">
+                    <p className="text-sm md:text-base text-white font-medium truncate">{tussle.name}</p>
+                    <p className="text-xs md:text-sm text-slate-300 truncate">{tussle.companies?.name}</p>
                   </div>
-                  <span className="text-nature-gold font-medium">{formatDate(tussle.due_date)}</span>
+                  <span className="text-xs md:text-sm text-nature-gold font-medium whitespace-nowrap">{formatDate(tussle.due_date)}</span>
                 </motion.div>
               ))}
             </div>
