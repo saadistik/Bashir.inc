@@ -122,7 +122,7 @@ export const AppLayout = () => {
       </div>
 
       {/* Main Content */}
-      <main className="pt-20 pb-36 md:pt-24 md:pb-12 px-3 sm:px-4 md:px-8 max-w-7xl mx-auto">
+      <main className="pt-16 pb-32 md:pt-24 md:pb-12 px-3 md:px-8 max-w-7xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -141,9 +141,9 @@ export const AppLayout = () => {
         <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-md"
+          className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-md"
         >
-          <div className="glass-panel px-2 py-2 flex items-center justify-around gap-1">
+          <div className="glass-panel px-1.5 py-2 flex items-center justify-around gap-0.5">
             {filteredNavItems.slice(0, 4).map((item, index) => {
               const Icon = item.icon
               const isActive = location.pathname === item.path
@@ -153,13 +153,13 @@ export const AppLayout = () => {
                   key={item.path}
                   onClick={() => navigate(item.path)}
                   whileTap={{ scale: 0.9 }}
-                  className={`relative p-3 rounded-xl transition-all ${
+                  className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                     isActive 
                       ? 'bg-white/20 text-white' 
                       : 'text-slate-200'
                   }`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5 mx-auto" />
                   {isActive && (
                     <motion.div
                       layoutId="activeMobileTab"
@@ -174,13 +174,13 @@ export const AppLayout = () => {
             <motion.button
               onClick={() => navigate('/profile')}
               whileTap={{ scale: 0.9 }}
-              className={`relative p-3 rounded-xl transition-all ${
+              className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                 location.pathname === '/profile'
                   ? 'bg-white/20 text-white' 
                   : 'text-slate-200'
               }`}
             >
-              <User className="w-5 h-5" />
+              <User className="w-5 h-5 mx-auto" />
             </motion.button>
           </div>
         </motion.nav>
@@ -191,9 +191,9 @@ export const AppLayout = () => {
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
-            className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
+            className="fixed bottom-[4.5rem] right-3 z-50 w-12 h-12 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
           >
-            <Plus className="w-7 h-7 text-white" />
+            <Plus className="w-6 h-6 text-white" />
           </motion.button>
         )}
       </div>

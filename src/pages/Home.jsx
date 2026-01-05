@@ -70,25 +70,25 @@ export const Home = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-4xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-slate-200">Welcome back! Here's what's happening today.</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-sm md:text-base text-slate-200">Welcome back! Here's what's happening today.</p>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className="glass-panel p-6"
+          className="glass-panel p-4 md:p-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-nature-teal/30 rounded-2xl">
-              <Package className="w-6 h-6 text-nature-mint" />
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="p-2.5 md:p-3 bg-nature-teal/30 rounded-2xl flex-shrink-0">
+              <Package className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
             </div>
-            <div>
-              <p className="text-slate-200 text-sm">Pending Orders</p>
-              <p className="text-3xl font-bold text-white">{stats.pending}</p>
+            <div className="min-w-0">
+              <p className="text-slate-200 text-xs md:text-sm">Pending Orders</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">{stats.pending}</p>
             </div>
           </div>
         </motion.div>
@@ -97,15 +97,15 @@ export const Home = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="glass-panel p-6"
+          className="glass-panel p-4 md:p-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-nature-gold/30 rounded-2xl">
-              <Clock className="w-6 h-6 text-nature-gold" />
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="p-2.5 md:p-3 bg-nature-gold/30 rounded-2xl flex-shrink-0">
+              <Clock className="w-5 h-5 md:w-6 md:h-6 text-nature-gold" />
             </div>
-            <div>
-              <p className="text-slate-200 text-sm">Completed</p>
-              <p className="text-3xl font-bold text-white">{stats.completed}</p>
+            <div className="min-w-0">
+              <p className="text-slate-200 text-xs md:text-sm">Completed</p>
+              <p className="text-2xl md:text-3xl font-bold text-white">{stats.completed}</p>
             </div>
           </div>
         </motion.div>
@@ -114,15 +114,15 @@ export const Home = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="glass-panel p-6"
+          className="glass-panel p-4 md:p-6"
         >
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-nature-mint/30 rounded-2xl">
-              <TrendingUp className="w-6 h-6 text-nature-mint" />
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="p-2.5 md:p-3 bg-nature-mint/30 rounded-2xl flex-shrink-0">
+              <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
             </div>
-            <div>
-              <p className="text-slate-200 text-sm">Total Revenue</p>
-              <p className="text-2xl font-bold text-white">{formatCurrency(stats.revenue)}</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-slate-200 text-xs md:text-sm">Total Revenue</p>
+              <p className="text-lg md:text-2xl font-bold text-white truncate">{formatCurrency(stats.revenue)}</p>
             </div>
           </div>
         </motion.div>
