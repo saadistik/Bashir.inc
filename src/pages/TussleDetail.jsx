@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Package, Receipt, Users, Plus, Upload, Check, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
@@ -11,6 +11,7 @@ const TABS = ['overview', 'materials', 'labor']
 export const TussleDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState('overview')
   const [tussle, setTussle] = useState(null)
   const [company, setCompany] = useState(null)
@@ -18,7 +19,7 @@ export const TussleDetail = () => {
 
   useEffect(() => {
     fetchTussleData()
-  }, [id])
+  }, [id, location.pathname])
 
   const fetchTussleData = async () => {
     try {
