@@ -259,29 +259,6 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
       setUploading(false)
     }
   }
-        .insert([{
-          company_id: companyId,
-          name: formData.name,
-          sell_price: parseFloat(formData.sell_price),
-          due_date: formData.due_date || null,
-          image_url: imageUrl,
-          status: 'pending',
-        }])
-        .select()
-        .single()
-
-      if (error) throw error
-
-      // Redirect to the new tussle detail page
-      navigate(`/tussles/${data.id}`)
-    } catch (error) {
-      console.error('Error creating tussle:', error)
-      alert(error.message || 'Error creating tussle. Please try again.')
-    } finally {
-      setSaving(false)
-      setUploading(false)
-    }
-  }
 
   return (
     <motion.div
