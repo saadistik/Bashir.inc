@@ -54,7 +54,7 @@ export const Login = () => {
     <div className="min-h-screen relative overflow-hidden flex items-center justify-center p-4 animated-gradient">
       {/* Floating Colorful Orbs */}
       <motion.div
-        className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-full blur-3xl"
+        className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-purple-300/10 to-blue-300/10 rounded-full blur-3xl"
         animate={{
           x: [0, 60, 0],
           y: [0, 40, 0],
@@ -67,7 +67,7 @@ export const Login = () => {
         }}
       />
       <motion.div
-        className="absolute top-1/2 right-10 w-80 h-80 bg-gradient-to-br from-pink-400/15 to-rose-400/15 rounded-full blur-3xl"
+        className="absolute top-1/2 right-10 w-80 h-80 bg-gradient-to-br from-pink-300/8 to-rose-300/8 rounded-full blur-3xl"
         animate={{
           x: [0, -40, 0],
           y: [0, 60, 0],
@@ -81,7 +81,7 @@ export const Login = () => {
         }}
       />
       <motion.div
-        className="absolute bottom-10 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-400/15 to-teal-400/15 rounded-full blur-3xl"
+        className="absolute bottom-10 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-300/8 to-teal-300/8 rounded-full blur-3xl"
         animate={{
           x: [0, 50, 0],
           y: [0, -30, 0],
@@ -126,11 +126,11 @@ export const Login = () => {
           {/* Login Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-900 mb-2">
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600" />
                 <input
                   id="username"
                   type="text"
@@ -138,7 +138,7 @@ export const Login = () => {
                   onChange={(e) => setUsername(e.target.value)}
                   onFocus={() => setIsTypingUsername(true)}
                   onBlur={() => setIsTypingUsername(false)}
-                  className="w-full pl-12 pr-4 py-3 glass-button text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full pl-12 pr-4 py-3 glass-button text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="Enter username"
                   required
                   disabled={loading}
@@ -147,11 +147,11 @@ export const Login = () => {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-500" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600" />
                 <input
                   id="password"
                   type="password"
@@ -159,7 +159,7 @@ export const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => setIsTypingPassword(true)}
                   onBlur={() => setIsTypingPassword(false)}
-                  className="w-full pl-12 pr-4 py-3 glass-button text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full pl-12 pr-4 py-3 glass-button text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   placeholder="Enter password"
                   required
                   disabled={loading}
@@ -188,7 +188,7 @@ export const Login = () => {
           </form>
 
           {/* Helper Text */}
-          <div className="mt-6 text-center text-xs text-gray-600 space-y-1">
+          <div className="mt-6 text-center text-xs text-gray-800 space-y-1">
             <p>Demo: owner / bashir123 (Owner Dashboard)</p>
             <p>Demo: ali / bashir123 (Employee View)</p>
           </div>
