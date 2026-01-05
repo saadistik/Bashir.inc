@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Home, Building2, Calendar, Users, User, Plus, LogOut } from 'lucide-react'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../../contexts/AuthContext'
 
 const navItems = [
   { path: '/home', icon: Home, label: 'Home', employeeOnly: true },
@@ -326,4 +326,4 @@ const AddOrderModal = ({ onClose }) => {
 }
 
 // Need to import supabase for the modal
-import { supabase } from '../lib/supabase'
+import { supabase } from '../../lib/supabase'
