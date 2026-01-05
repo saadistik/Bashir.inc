@@ -64,30 +64,30 @@ export const Home = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">Dashboard</h1>
-        <p className="text-sm md:text-base text-slate-200">Welcome back! Here's what's happening today.</p>
+        <h1 className="text-2xl md:text-4xl font-bold text-white mb-1 md:mb-2">Dashboard</h1>
+        <p className="text-xs md:text-base text-slate-200">Welcome back! Here's what's happening today.</p>
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+      <div className="space-y-3 md:grid md:grid-cols-3 md:gap-4 md:space-y-0">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.1 }}
-          className="glass-panel p-4 md:p-6"
+          className="glass-panel p-3.5 md:p-6"
         >
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="p-2.5 md:p-3 bg-nature-teal/30 rounded-2xl flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 md:p-3 bg-nature-teal/30 rounded-xl md:rounded-2xl flex-shrink-0">
               <Package className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-200 text-xs md:text-sm">Pending Orders</p>
+              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Pending Orders</p>
               <p className="text-2xl md:text-3xl font-bold text-white">{stats.pending}</p>
             </div>
           </div>
@@ -97,14 +97,14 @@ export const Home = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="glass-panel p-4 md:p-6"
+          className="glass-panel p-3.5 md:p-6"
         >
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="p-2.5 md:p-3 bg-nature-gold/30 rounded-2xl flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 md:p-3 bg-nature-gold/30 rounded-xl md:rounded-2xl flex-shrink-0">
               <Clock className="w-5 h-5 md:w-6 md:h-6 text-nature-gold" />
             </div>
             <div className="min-w-0">
-              <p className="text-slate-200 text-xs md:text-sm">Completed</p>
+              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Completed</p>
               <p className="text-2xl md:text-3xl font-bold text-white">{stats.completed}</p>
             </div>
           </div>
@@ -114,15 +114,15 @@ export const Home = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="glass-panel p-4 md:p-6"
+          className="glass-panel p-3.5 md:p-6"
         >
-          <div className="flex items-center gap-3 md:gap-4">
-            <div className="p-2.5 md:p-3 bg-nature-mint/30 rounded-2xl flex-shrink-0">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 md:p-3 bg-nature-mint/30 rounded-xl md:rounded-2xl flex-shrink-0">
               <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-nature-mint" />
             </div>
-            <div className="min-w-0 overflow-hidden">
-              <p className="text-slate-200 text-xs md:text-sm">Total Revenue</p>
-              <p className="text-lg md:text-2xl font-bold text-white truncate">{formatCurrency(stats.revenue)}</p>
+            <div className="min-w-0 overflow-hidden flex-1">
+              <p className="text-slate-200 text-xs md:text-sm mb-0.5">Total Revenue</p>
+              <p className="text-base md:text-2xl font-bold text-white break-all">{formatCurrency(stats.revenue)}</p>
             </div>
           </div>
         </motion.div>
@@ -134,7 +134,7 @@ export const Home = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <h2 className="text-2xl font-bold text-white mb-4">Pending Orders</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Pending Orders</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {tussles.filter(t => t.status === 'pending').map((tussle, index) => (
             <motion.div
@@ -173,7 +173,7 @@ export const Home = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <h2 className="text-2xl font-bold text-white mb-4">Upcoming Deadlines</h2>
+          <h2 className="text-xl md:text-2xl font-bold text-white mb-3 md:mb-4">Upcoming Deadlines</h2>
           <div className="glass-panel p-6">
             <div className="space-y-3">
               {upcomingDeadlines.map((tussle) => (
