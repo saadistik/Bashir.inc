@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AppLayout } from './components/layout/AppLayout'
+import { ConfigError } from './components/ConfigError'
 import { Login } from './pages/Login'
 import { Home } from './pages/Home'
 import { Dashboard } from './pages/Dashboard'
@@ -11,6 +12,7 @@ import { TussleDetail } from './pages/TussleDetail'
 import { Calendar } from './pages/Calendar'
 import { Workers } from './pages/Workers'
 import { Profile } from './pages/Profile'
+import { isConfigured } from './lib/supabase'
 
 function AppRoutes() {
   const { profile, loading } = useAuth()
@@ -74,6 +76,11 @@ function AppRoutes() {
 }
 
 function App() {
+  // Check if environment variables are configured
+  if (!isConfigured) {
+    return <ConfigError />
+  }
+
   return (
     <BrowserRouter>
       <AuthProvider>
