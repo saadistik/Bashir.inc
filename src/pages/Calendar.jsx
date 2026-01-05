@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
-import { Calendar as CalendarIcon, Plus } from 'lucide-react'
+import { Calendar as CalendarIcon, Plus, X, Clock } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../contexts/AuthContext'
 
 export const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -11,7 +12,9 @@ export const Calendar = () => {
   const [tussleDeadlines, setTussleDeadlines] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedDate, setSelectedDate] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const location = useLocation()
+  const { profile } = useAuth()
 
   useEffect(() => {
     fetchCalendarData()
@@ -21,9 +24,9 @@ export const Calendar = () => {
     try {
       // Fetch calendar events
       const { data: eventsData, error: eventsError } = await supabase
-        .from('calendar_events')
+        .from('events')
         .select('*')
-        .order('date')
+        .order('event_date')
 
       if (eventsError) throw eventsError
 
@@ -57,7 +60,7 @@ export const Calendar = () => {
 
   const getEventsForDate = (date) => {
     const dateStr = format(date, 'yyyy-MM-dd')
-    const calendarEvents = events.filter(e => e.date === dateStr)
+    const calendarEvents = events.filter(e => e.event_date === dateStr)
     const deadlines = tussleDeadlines.filter(t => t.due_date === dateStr)
     return { calendarEvents, deadlines }
   }
@@ -87,7 +90,9 @@ export const Calendar = () => {
       >
         <div>
           <h1 className="text-4xl font-bold text-white mb-2">Calendar</h1>
-          <p className="text-slate-200">Track deadlines and events</p>
+          <p className="text-slate-300">
+            {profile?.role === 'owner' ? 'Click on any date to create an event' : 'Track deadlines and events'}
+          </p>
         </div>
       </motion.div>
 
@@ -152,14 +157,19 @@ export const Calendar = () => {
                 key={date.toISOString()}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setSelectedDate(date)}
+                onClick={() => {
+                  setSelectedDate(date)
+                  if (profile?.role === 'owner') {
+                    setShowCreateModal(true)
+                  }
+                }}
                 className={`aspect-square rounded-xl p-2 transition-all relative ${
                   isSelected
-                    ? 'bg-nature-teal/40 shadow-glow-teal'
+                    ? 'bg-emerald-500/40 border border-emerald-500/50'
                     : isCurrentDay
-                    ? 'bg-nature-gold/30 border-2 border-nature-gold'
+                    ? 'bg-purple-500/30 border-2 border-purple-500/50'
                     : 'bg-white/5 hover:bg-white/10'
-                }`}
+                } ${profile?.role === 'owner' ? 'cursor-pointer' : ''}`}
               >
                 <span className={`text-sm font-medium ${
                   isSelected || isCurrentDay ? 'text-white' : 'text-slate-200'
@@ -171,7 +181,7 @@ export const Calendar = () => {
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-nature-mint rounded-full"
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-emerald-400 rounded-full"
                   />
                 )}
               </motion.button>
@@ -227,11 +237,11 @@ export const Calendar = () => {
                   {calendarEvents.map((event) => (
                     <div
                       key={`event-${event.id}`}
-                      className="p-4 bg-nature-teal/10 border border-nature-teal/30 rounded-xl"
+                      className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl"
                     >
-                      <p className="text-white font-medium">{event.title}</p>
-                      {event.type && (
-                        <span className="text-xs text-nature-mint">{event.type}</span>
+                      <p className="text-white font-medium">{event.name}</p>
+                      {event.description && (
+                        <p className="text-sm text-slate-300 mt-1">{event.description}</p>
                       )}
                     </div>
                   ))}
@@ -261,7 +271,7 @@ export const Calendar = () => {
                 <p className="text-sm text-slate-300">{deadline.companies?.name}</p>
               </div>
               <div className="text-right">
-                <p className="text-nature-gold font-medium">
+                <p className="text-purple-400 font-medium">
                   {format(new Date(deadline.due_date), 'MMM d, yyyy')}
                 </p>
                 <span className={`text-xs ${
@@ -274,6 +284,161 @@ export const Calendar = () => {
           ))}
         </div>
       </motion.div>
+
+      {/* Create Event Modal */}
+      <AnimatePresence>
+        {showCreateModal && (
+          <CreateEventModal
+            selectedDate={selectedDate}
+            onClose={() => {
+              setShowCreateModal(false)
+            }}
+            onEventCreated={fetchCalendarData}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  )
+}
+
+// Create Event Modal Component
+const CreateEventModal = ({ selectedDate, onClose, onEventCreated }) => {
+  const [name, setName] = useState('')
+  const [description, setDescription] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const { user } = useAuth()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!name.trim()) {
+      setError('Event name is required')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+
+    try {
+      const { error: insertError } = await supabase
+        .from('events')
+        .insert([{
+          name: name.trim(),
+          description: description.trim() || null,
+          event_date: format(selectedDate, 'yyyy-MM-dd'),
+          created_by: user.id
+        }])
+
+      if (insertError) throw insertError
+
+      onEventCreated()
+      onClose()
+    } catch (err) {
+      console.error('Error creating event:', err)
+      setError('Failed to create event. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className="glass-panel p-6 w-full max-w-md"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-white mb-1">Create Event</h2>
+            <p className="text-sm text-slate-400">
+              {format(selectedDate, 'EEEE, MMMM d, yyyy')}
+            </p>
+          </div>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onClose}
+            className="p-2 hover:bg-white/10 rounded-xl transition-all"
+          >
+            <X className="w-6 h-6 text-slate-400" />
+          </motion.button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="eventName" className="block text-sm font-medium text-white mb-2">
+              Event Name *
+            </label>
+            <input
+              id="eventName"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              placeholder="e.g., Team Meeting"
+              required
+              autoFocus
+              disabled={loading}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="eventDescription" className="block text-sm font-medium text-white mb-2">
+              Description
+            </label>
+            <textarea
+              id="eventDescription"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all resize-none"
+              placeholder="Add details about the event..."
+              disabled={loading}
+            />
+          </div>
+
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-red-500/20 border border-red-500/50 rounded-xl p-3 text-red-200 text-sm"
+            >
+              {error}
+            </motion.div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3 pt-2">
+            <motion.button
+              type="button"
+              onClick={onClose}
+              whileTap={{ scale: 0.95 }}
+              className="flex-1 px-4 py-3 glass-button text-slate-300 hover:text-white transition-all rounded-xl"
+              disabled={loading}
+            >
+              Cancel
+            </motion.button>
+            <motion.button
+              type="submit"
+              whileTap={{ scale: 0.95 }}
+              className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/30"
+              disabled={loading}
+            >
+              {loading ? 'Creating...' : 'Create Event'}
+            </motion.button>
+          </div>
+        </form>
+      </motion.div>
+    </motion.div>
   )
 }
