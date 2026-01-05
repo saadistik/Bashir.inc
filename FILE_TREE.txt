@@ -1,0 +1,191 @@
+Bashir.inc/
+│
+├── 📄 Configuration & Build
+│   ├── package.json                    # Dependencies and scripts
+│   ├── vite.config.js                  # Vite configuration
+│   ├── tailwind.config.js              # Tailwind with Nature Glass theme
+│   ├── postcss.config.js               # PostCSS for Tailwind
+│   ├── index.html                      # HTML entry point
+│   ├── .env.example                    # Environment variable template
+│   └── .gitignore                      # Git exclusions
+│
+├── 📚 Documentation
+│   ├── README.md                       # Project overview and features
+│   ├── SETUP_GUIDE.md                  # Step-by-step setup instructions
+│   ├── QUICK_REFERENCE.md              # Quick reference guide
+│   ├── PROJECT_COMPLETE.md             # Completion summary
+│   └── FILE_TREE.txt                   # This file
+│
+├── 🗄️ Database
+│   └── supabase_schema.sql             # Complete database schema + seed data
+│
+└── 📦 src/
+    │
+    ├── 🎯 Entry Points
+    │   ├── main.jsx                    # React entry point
+    │   ├── App.jsx                     # Main app with React Router
+    │   └── index.css                   # Global styles + Tailwind
+    │
+    ├── 🔧 Core Libraries
+    │   └── lib/
+    │       ├── supabase.js             # Supabase client initialization
+    │       └── utils.js                # Helper functions (formatCurrency, etc.)
+    │
+    ├── 🌐 Global State
+    │   └── contexts/
+    │       └── AuthContext.jsx         # Authentication state management
+    │
+    ├── 🧩 Reusable Components
+    │   ├── ProtectedRoute.jsx          # Route authentication wrapper
+    │   │
+    │   ├── auth/
+    │   │   └── LoginMascot.jsx         # Interactive SVG mascot
+    │   │                               #   - Eye tracking
+    │   │                               #   - Password hiding animation
+    │   │                               #   - Success celebration
+    │   │
+    │   └── layout/
+    │       └── AppLayout.jsx           # Main application layout
+    │                                   #   - Animated gradient background
+    │                                   #   - Responsive navigation (mobile/desktop)
+    │                                   #   - Floating Add button
+    │                                   #   - Add Order modal
+    │
+    └── 📄 Pages
+        │
+        ├── Login.jsx                   # Login page
+        │                               #   - Mascot integration
+        │                               #   - Animated background
+        │                               #   - Role-based redirect
+        │
+        ├── 👤 Employee Views
+        │   ├── Home.jsx                # Employee dashboard
+        │   │                           #   - Pending orders
+        │   │                           #   - Upcoming deadlines
+        │   │                           #   - Quick stats
+        │   │
+        │   ├── Companies.jsx           # Company list
+        │   │                           #   - Search functionality
+        │   │                           #   - Revenue tracking
+        │   │
+        │   ├── CompanyDetail.jsx       # Company detail page
+        │   │                           #   - Tussle list
+        │   │                           #   - Smart Add Tussle flow
+        │   │                           #   - Total revenue calculation
+        │   │
+        │   ├── TussleDetail.jsx        # Tussle workspace
+        │   │                           #   - Hero image display
+        │   │                           #   - Status toggle
+        │   │                           #   - Tab 1: Overview (profit calc)
+        │   │                           #   - Tab 2: Materials (receipts)
+        │   │                           #   - Tab 3: Labor (workers)
+        │   │
+        │   ├── Calendar.jsx            # Calendar view
+        │   │                           #   - Monthly calendar grid
+        │   │                           #   - Deadline tracking
+        │   │                           #   - Event management
+        │   │
+        │   └── Workers.jsx             # Worker management
+        │                               #   - Worker list
+        │                               #   - Stats (earnings, jobs)
+        │
+        ├── 👑 Owner Views
+        │   └── Dashboard.jsx           # Financial dashboard
+        │                               #   - Key metrics cards
+        │                               #   - Profit chart (Recharts)
+        │                               #   - Weekly/Monthly toggle
+        │                               #   - Pie chart (status)
+        │                               #   - Cost breakdown
+        │
+        └── 🔀 Shared Views
+            └── Profile.jsx             # User profile
+                                        #   - User info display
+                                        #   - Logout button
+                                        #   - Employee management (owner only)
+                                        #   - Create employee modal
+
+────────────────────────────────────────────────────────────────
+
+📊 STATISTICS
+
+Total Files Created: 28
+  - Configuration: 7
+  - Documentation: 5
+  - Source Code: 15
+  - Database: 1
+
+Lines of Code: ~3,500+
+
+Components:
+  - Pages: 10
+  - Layout: 1
+  - Auth: 1
+  - Utilities: 4
+
+Features:
+  - Authentication: ✅
+  - Role-based access: ✅
+  - Financial dashboard: ✅
+  - Order management: ✅
+  - Worker management: ✅
+  - Calendar: ✅
+  - Responsive design: ✅
+  - Animations: ✅
+
+────────────────────────────────────────────────────────────────
+
+🗄️ DATABASE SCHEMA
+
+Tables: 8
+  1. profiles              (User info)
+  2. companies             (Clients)
+  3. tussles               (Orders)
+  4. receipts              (Expenses)
+  5. expense_allocations   (Receipt → Tussle)
+  6. workers               (Labor)
+  7. work_assignments      (Worker → Tussle)
+  8. calendar_events       (Events)
+
+Relationships: 6 foreign keys
+Security: RLS enabled on all tables
+Triggers: 6 auto-update triggers
+Indexes: 11 performance indexes
+
+────────────────────────────────────────────────────────────────
+
+🎨 KEY DESIGN ELEMENTS
+
+Glassmorphism:
+  - bg-white/10
+  - backdrop-blur-xl
+  - border-white/20
+  - Custom glass shadows
+
+Animations:
+  - Framer Motion transitions
+  - Gradient background shifts
+  - Floating buttons
+  - Pulse glow effects
+  - Page transitions
+
+Responsive:
+  - Mobile: Bottom dock
+  - Desktop: Top capsule
+  - Adaptive grid layouts
+  - Touch-friendly
+
+────────────────────────────────────────────────────────────────
+
+🚀 QUICK START
+
+1. npm install
+2. Create .env with Supabase credentials
+3. Run supabase_schema.sql in Supabase
+4. Create demo users (owner & ali)
+5. npm run dev
+6. Navigate to localhost:3000
+
+────────────────────────────────────────────────────────────────
+
+Built with React, Supabase, Tailwind CSS, and Framer Motion
+January 2026
