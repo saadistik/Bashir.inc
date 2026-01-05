@@ -35,18 +35,10 @@ export const AppLayout = () => {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Animated Background */}
-      <div 
-        className="fixed inset-0 bg-gradient-to-br from-nature-emerald via-nature-forest to-nature-teal animate-gradient-shift -z-10"
-        style={{
-          backgroundSize: '200% 200%',
-        }}
-      />
-      
-      {/* Ambient Orbs */}
+    <div className="min-h-screen relative overflow-hidden animated-gradient">
+      {/* Floating Colorful Orbs */}
       <motion.div
-        className="fixed top-1/4 left-1/4 w-96 h-96 bg-nature-teal/20 rounded-full blur-3xl -z-10"
+        className="fixed top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-purple-400/20 to-blue-400/20 rounded-full blur-3xl -z-10"
         animate={{
           x: [0, 100, 0],
           y: [0, 50, 0],
@@ -59,7 +51,7 @@ export const AppLayout = () => {
         }}
       />
       <motion.div
-        className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-nature-gold/15 rounded-full blur-3xl -z-10"
+        className="fixed bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-pink-400/15 to-rose-400/15 rounded-full blur-3xl -z-10"
         animate={{
           x: [0, -80, 0],
           y: [0, 80, 0],
@@ -70,6 +62,20 @@ export const AppLayout = () => {
           repeat: Infinity,
           ease: "easeInOut",
           delay: 2
+        }}
+      />
+      <motion.div
+        className="fixed top-1/2 left-1/3 w-72 h-72 bg-gradient-to-br from-emerald-400/12 to-teal-400/12 rounded-full blur-3xl -z-10"
+        animate={{
+          x: [0, -60, 0],
+          y: [0, 70, 0],
+          scale: [1, 1.25, 1],
+        }}
+        transition={{
+          duration: 18,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1
         }}
       />
 
@@ -92,15 +98,15 @@ export const AppLayout = () => {
                   whileTap={{ scale: 0.95 }}
                   className={`relative px-5 py-3 rounded-xl transition-all ${
                     isActive 
-                      ? 'bg-white/20 text-white shadow-glow' 
-                      : 'text-slate-200 hover:bg-white/10'
+                      ? 'bg-purple-500/20 text-purple-700' 
+                      : 'text-gray-700 hover:bg-purple-500/10'
                   }`}
                 >
                   <Icon className="w-5 h-5" />
                   {isActive && (
                     <motion.div
                       layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-nature-teal/30 to-nature-mint/30 rounded-xl -z-10"
+                      className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl -z-10"
                       transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                     />
                   )}
@@ -113,7 +119,7 @@ export const AppLayout = () => {
             <motion.button
               onClick={handleLogout}
               whileTap={{ scale: 0.95 }}
-              className="px-5 py-3 rounded-xl text-slate-200 hover:bg-white/10 transition-all"
+              className="px-5 py-3 rounded-xl text-gray-700 hover:bg-red-500/10 hover:text-red-600 transition-all"
             >
               <LogOut className="w-5 h-5" />
             </motion.button>
@@ -158,15 +164,15 @@ export const AppLayout = () => {
                     whileTap={{ scale: 0.9 }}
                     className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                       isActive 
-                        ? 'bg-white/20 text-white' 
-                        : 'text-slate-200'
+                        ? 'bg-purple-500/20 text-purple-700' 
+                        : 'text-gray-600'
                     }`}
                   >
                     <Icon className="w-5 h-5 mx-auto" />
                     {isActive && (
                       <motion.div
                         layoutId="activeMobileTab"
-                        className="absolute inset-0 bg-gradient-to-r from-nature-teal/30 to-nature-mint/30 rounded-2xl -z-10"
+                        className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl -z-10"
                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                       />
                     )}
@@ -179,8 +185,8 @@ export const AppLayout = () => {
                 whileTap={{ scale: 0.9 }}
                 className={`relative p-2.5 rounded-xl transition-all flex-1 ${
                   location.pathname === '/profile'
-                    ? 'bg-white/20 text-white' 
-                    : 'text-slate-200'
+                    ? 'bg-purple-500/20 text-purple-700' 
+                    : 'text-gray-600'
                 }`}
               >
                 <User className="w-5 h-5 mx-auto" />
@@ -195,7 +201,7 @@ export const AppLayout = () => {
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
-            className="fixed bottom-[5.5rem] right-6 z-[60] w-14 h-14 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
+            className="fixed bottom-[5.5rem] right-6 z-[60] w-14 h-14 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full shadow-lg shadow-purple-500/40 flex items-center justify-center animate-float"
           >
             <Plus className="w-7 h-7 text-white" />
           </motion.button>
@@ -208,7 +214,7 @@ export const AppLayout = () => {
           onClick={handleAddClick}
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.05 }}
-          className="hidden md:flex fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal items-center justify-center animate-float"
+          className="hidden md:flex fixed bottom-8 right-8 z-50 w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full shadow-lg shadow-purple-500/40 items-center justify-center animate-float"
         >
           <Plus className="w-8 h-8 text-white" />
         </motion.button>

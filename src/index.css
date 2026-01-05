@@ -13,15 +13,33 @@
 
 @layer utilities {
   .glass-panel {
-    @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-glass rounded-3xl;
+    @apply bg-white/70 backdrop-blur-2xl border border-white/40 rounded-3xl;
+    box-shadow: 
+      0 8px 32px rgba(139, 92, 246, 0.1),
+      0 4px 16px rgba(59, 130, 246, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.5),
+      inset 0 -1px 0 rgba(139, 92, 246, 0.1);
   }
   
   .glass-button {
-    @apply bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl transition-all;
+    @apply bg-white/60 backdrop-blur-md border border-white/50 rounded-2xl transition-all;
+    box-shadow: 
+      0 4px 16px rgba(139, 92, 246, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
   }
   
   .text-glow {
-    text-shadow: 0 0 20px rgba(252, 211, 77, 0.5);
+    background: linear-gradient(135deg, #8B5CF6 0%, #3B82F6 50%, #10B981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-purple {
+    background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   .scrollbar-hide {
@@ -31,5 +49,17 @@
   
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  .animated-gradient {
+    background: linear-gradient(-45deg, #f3f4f6, #e0e7ff, #ddd6fe, #fce7f3, #f3f4f6);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 }
