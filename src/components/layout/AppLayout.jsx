@@ -122,7 +122,7 @@ export const AppLayout = () => {
       </div>
 
       {/* Main Content */}
-      <main className="pt-16 pb-32 md:pt-24 md:pb-12 px-3 md:px-8 max-w-7xl mx-auto">
+      <main className="pt-16 pb-24 md:pt-24 md:pb-12 px-3 md:px-8 max-w-7xl mx-auto min-h-screen">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -130,6 +130,7 @@ export const AppLayout = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
+            className="pb-20 md:pb-0"
           >
             <Outlet />
           </motion.div>
@@ -141,9 +142,9 @@ export const AppLayout = () => {
         <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 w-[96%] max-w-md"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] w-[95%] max-w-md"
         >
-          <div className="glass-panel px-1.5 py-2 flex items-center justify-around gap-0.5">
+          <div className="glass-panel px-1.5 py-2.5 flex items-center justify-around gap-0.5 shadow-2xl">
             {filteredNavItems.slice(0, 4).map((item, index) => {
               const Icon = item.icon
               const isActive = location.pathname === item.path
@@ -191,9 +192,9 @@ export const AppLayout = () => {
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
-            className="fixed bottom-[4.5rem] right-3 z-50 w-12 h-12 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
+            className="fixed bottom-20 right-4 z-[60] w-14 h-14 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
           >
-            <Plus className="w-6 h-6 text-white" />
+            <Plus className="w-7 h-7 text-white" />
           </motion.button>
         )}
       </div>
