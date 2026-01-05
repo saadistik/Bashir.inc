@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Plus, Package } from 'lucide-react'
+import { ArrowLeft, Plus, Package, Upload, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency, formatDate } from '../lib/utils'
+import { uploadImage } from '../lib/uploadImage'
 
 export const CompanyDetail = () => {
   const { id } = useParams()
@@ -181,16 +182,50 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
     name: '',
     sell_price: '',
     due_date: '',
-    image_url: '',
   })
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
   const navigate = useNavigate()
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImageFile(file)
+      // Create preview
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeImage = () => {
+    setImageFile(null)
+    setImagePreview(null)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSaving(true)
 
     try {
+      let imageUrl = null
+
+      // Upload image if selected
+      if (imageFile) {
+        setUploading(true)
+        const { url, error: uploadError } = await uploadImage(imageFile)
+        setUploading(false)
+        
+        if (uploadError) {
+          throw new Error('Failed to upload image: ' + uploadError.message)
+        }
+        imageUrl = url
+      }
+
       const { data, error } = await supabase
         .from('tussles')
         .insert([{
@@ -198,7 +233,7 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
           name: formData.name,
           sell_price: parseFloat(formData.sell_price),
           due_date: formData.due_date || null,
-          image_url: formData.image_url || null,
+          image_url: imageUrl,
           status: 'pending',
         }])
         .select()
@@ -210,9 +245,10 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
       navigate(`/tussles/${data.id}`)
     } catch (error) {
       console.error('Error creating tussle:', error)
-      alert('Error creating tussle. Please try again.')
+      alert(error.message || 'Error creating tussle. Please try again.')
     } finally {
       setSaving(false)
+      setUploading(false)
     }
   }
 
@@ -229,9 +265,9 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="glass-panel p-8 w-full max-w-md max-h-[90vh] overflow-y-auto"
+        className="glass-panel p-6 sm:p-8 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto"
       >
-        <h2 className="text-2xl font-bold text-white mb-6">Create New Tussle</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Create New Tussle</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -278,25 +314,47 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
 
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
-              Reference Image URL
+              Tussle Image
             </label>
-            <input
-              type="url"
-              value={formData.image_url}
-              onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-              className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
-              placeholder="https://example.com/image.jpg"
-            />
+            
+            {imagePreview ? (
+              <div className="relative">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="w-full h-48 object-cover rounded-xl"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-500 rounded-full transition-colors"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+              </div>
+            ) : (
+              <label className="flex flex-col items-center justify-center w-full h-32 glass-button border-2 border-dashed border-white/30 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+                <Upload className="w-8 h-8 text-slate-400 mb-2" />
+                <span className="text-sm text-slate-400">Click to upload image</span>
+                <span className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <motion.button
               type="submit"
-              disabled={saving}
+              disabled={saving || uploading}
               whileTap={{ scale: 0.96 }}
               className="flex-1 py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl shadow-glow-teal hover:shadow-glow transition-all disabled:opacity-50"
             >
-              {saving ? 'Creating...' : 'Create Tussle'}
+              {uploading ? 'Uploading Image...' : saving ? 'Creating...' : 'Create Tussle'}
             </motion.button>
             
             <motion.button

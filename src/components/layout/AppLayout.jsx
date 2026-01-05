@@ -122,7 +122,7 @@ export const AppLayout = () => {
       </div>
 
       {/* Main Content */}
-      <main className="pt-24 pb-32 md:pb-12 px-4 md:px-8 max-w-7xl mx-auto">
+      <main className="pt-20 pb-36 md:pt-24 md:pb-12 px-3 sm:px-4 md:px-8 max-w-7xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -141,9 +141,9 @@ export const AppLayout = () => {
         <motion.nav
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50"
+          className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-md"
         >
-          <div className="glass-panel px-4 py-3 flex items-center gap-1">
+          <div className="glass-panel px-2 py-2 flex items-center justify-around gap-1">
             {filteredNavItems.slice(0, 4).map((item, index) => {
               const Icon = item.icon
               const isActive = location.pathname === item.path
@@ -153,13 +153,13 @@ export const AppLayout = () => {
                   key={item.path}
                   onClick={() => navigate(item.path)}
                   whileTap={{ scale: 0.9 }}
-                  className={`relative p-4 rounded-2xl transition-all ${
+                  className={`relative p-3 rounded-xl transition-all ${
                     isActive 
                       ? 'bg-white/20 text-white' 
                       : 'text-slate-200'
                   }`}
                 >
-                  <Icon className="w-6 h-6" />
+                  <Icon className="w-5 h-5" />
                   {isActive && (
                     <motion.div
                       layoutId="activeMobileTab"
@@ -174,13 +174,13 @@ export const AppLayout = () => {
             <motion.button
               onClick={() => navigate('/profile')}
               whileTap={{ scale: 0.9 }}
-              className={`relative p-4 rounded-2xl transition-all ${
+              className={`relative p-3 rounded-xl transition-all ${
                 location.pathname === '/profile'
                   ? 'bg-white/20 text-white' 
                   : 'text-slate-200'
               }`}
             >
-              <User className="w-6 h-6" />
+              <User className="w-5 h-5" />
             </motion.button>
           </div>
         </motion.nav>
@@ -191,9 +191,9 @@ export const AppLayout = () => {
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
-            className="fixed bottom-24 right-6 z-50 w-16 h-16 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
+            className="fixed bottom-20 right-4 z-50 w-14 h-14 bg-gradient-to-br from-nature-teal to-nature-mint rounded-full shadow-glow-teal flex items-center justify-center animate-float"
           >
-            <Plus className="w-8 h-8 text-white" />
+            <Plus className="w-7 h-7 text-white" />
           </motion.button>
         )}
       </div>
@@ -281,9 +281,9 @@ const AddOrderModal = ({ onClose }) => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="glass-panel p-8 w-full max-w-md"
+        className="glass-panel p-6 sm:p-8 w-full max-w-md mx-4"
       >
-        <h2 className="text-2xl font-bold text-white mb-6">Add New Order</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Add New Order</h2>
         
         <div className="space-y-4">
           <div>
@@ -295,18 +295,18 @@ const AddOrderModal = ({ onClose }) => {
               value={clientName}
               onChange={(e) => setClientName(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
+              className="w-full px-4 py-2.5 sm:py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal text-base"
               placeholder="Enter client name..."
               autoFocus
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <motion.button
               onClick={handleSearch}
               disabled={searching || !clientName.trim()}
               whileTap={{ scale: 0.96 }}
-              className="flex-1 py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl shadow-glow-teal hover:shadow-glow transition-all disabled:opacity-50"
+              className="w-full sm:flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl shadow-glow-teal hover:shadow-glow transition-all disabled:opacity-50 text-base"
             >
               {searching ? 'Searching...' : 'Continue'}
             </motion.button>
@@ -314,7 +314,7 @@ const AddOrderModal = ({ onClose }) => {
             <motion.button
               onClick={onClose}
               whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 glass-button text-slate-200 rounded-xl hover:bg-white/20 transition-all"
+              className="w-full sm:w-auto px-6 py-2.5 sm:py-3 glass-button text-slate-200 rounded-xl hover:bg-white/20 transition-all text-base"
             >
               Cancel
             </motion.button>

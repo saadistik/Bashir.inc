@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Package, Receipt, Users, Plus, Upload, Check, X } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { formatCurrency, formatDate } from '../lib/utils'
+import { uploadReceipt } from '../lib/uploadImage'
 
 const TABS = ['overview', 'materials', 'labor']
 
@@ -530,10 +531,18 @@ const LaborTab = ({ tussleId }) => {
 
 // Add Expense Modal
 const AddExpenseModal = ({ tussleId, onClose, onSuccess }) => {
+  const [mode, setMode] = useState('select') // 'select' or 'upload'
   const [receipts, setReceipts] = useState([])
   const [selectedReceipt, setSelectedReceipt] = useState(null)
   const [allocatedAmount, setAllocatedAmount] = useState('')
+  
+  // Upload mode states
+  const [receiptFile, setReceiptFile] = useState(null)
+  const [receiptPreview, setReceiptPreview] = useState(null)
+  const [manualAmount, setManualAmount] = useState('')
+  
   const [saving, setSaving] = useState(false)
+  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
     fetchReceipts()
@@ -548,7 +557,24 @@ const AddExpenseModal = ({ tussleId, onClose, onSuccess }) => {
     if (!error) setReceipts(data || [])
   }
 
-  const handleSubmit = async (e) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setReceiptFile(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setReceiptPreview(reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeFile = () => {
+    setReceiptFile(null)
+    setReceiptPreview(null)
+  }
+
+  const handleSubmitExisting = async (e) => {
     e.preventDefault()
     if (!selectedReceipt || !allocatedAmount) return
 
@@ -573,6 +599,51 @@ const AddExpenseModal = ({ tussleId, onClose, onSuccess }) => {
     }
   }
 
+  const handleSubmitNew = async (e) => {
+    e.preventDefault()
+    if (!receiptFile || !manualAmount) return
+
+    setSaving(true)
+    setUploading(true)
+
+    try {
+      // Upload receipt image
+      const { url, error: uploadError } = await uploadReceipt(receiptFile)
+      if (uploadError) throw new Error('Failed to upload receipt')
+
+      // Create receipt record
+      const { data: receiptData, error: receiptError } = await supabase
+        .from('receipts')
+        .insert([{
+          image_url: url,
+          total_amount: parseFloat(manualAmount),
+        }])
+        .select()
+        .single()
+
+      if (receiptError) throw receiptError
+
+      // Create expense allocation
+      const { error: allocationError } = await supabase
+        .from('expense_allocations')
+        .insert([{
+          tussle_id: tussleId,
+          receipt_id: receiptData.id,
+          allocated_amount: parseFloat(manualAmount),
+        }])
+
+      if (allocationError) throw allocationError
+
+      onSuccess()
+    } catch (error) {
+      console.error('Error adding expense:', error)
+      alert(error.message || 'Error adding expense')
+    } finally {
+      setSaving(false)
+      setUploading(false)
+    }
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -586,88 +657,195 @@ const AddExpenseModal = ({ tussleId, onClose, onSuccess }) => {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="glass-panel p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+        className="glass-panel p-6 sm:p-8 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
       >
-        <h2 className="text-2xl font-bold text-white mb-6">Add Material Expense</h2>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Add Material Expense</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Receipt Selection */}
-          <div>
-            <label className="block text-sm font-medium text-slate-200 mb-3">
-              Select Receipt
-            </label>
-            <div className="grid grid-cols-2 gap-3 max-h-64 overflow-y-auto">
-              {receipts.map((receipt) => (
-                <motion.div
-                  key={receipt.id}
-                  onClick={() => setSelectedReceipt(receipt)}
-                  whileTap={{ scale: 0.95 }}
-                  className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
-                    selectedReceipt?.id === receipt.id
-                      ? 'border-nature-teal bg-nature-teal/20'
-                      : 'border-white/10 bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  {receipt.image_url && (
-                    <img
-                      src={receipt.image_url}
-                      alt="Receipt"
-                      className="w-full h-24 object-cover rounded-lg mb-2"
-                    />
-                  )}
-                  <p className="text-white font-medium">
-                    {formatCurrency(receipt.total_amount)}
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    {formatDate(receipt.uploaded_at)}
-                  </p>
-                </motion.div>
-              ))}
+        {/* Mode Toggle */}
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => setMode('select')}
+            className={`flex-1 py-2.5 px-4 rounded-xl font-medium transition-all ${
+              mode === 'select'
+                ? 'bg-nature-teal text-white'
+                : 'glass-button text-slate-300'
+            }`}
+          >
+            Select Existing
+          </button>
+          <button
+            onClick={() => setMode('upload')}
+            className={`flex-1 py-2.5 px-4 rounded-xl font-medium transition-all ${
+              mode === 'upload'
+                ? 'bg-nature-teal text-white'
+                : 'glass-button text-slate-300'
+            }`}
+          >
+            Upload New
+          </button>
+        </div>
+
+        {/* Select Existing Receipt Mode */}
+        {mode === 'select' && (
+          <form onSubmit={handleSubmitExisting} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-200 mb-3">
+                Select Receipt
+              </label>
+              {receipts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                  {receipts.map((receipt) => (
+                    <motion.div
+                      key={receipt.id}
+                      onClick={() => setSelectedReceipt(receipt)}
+                      whileTap={{ scale: 0.95 }}
+                      className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${
+                        selectedReceipt?.id === receipt.id
+                          ? 'border-nature-teal bg-nature-teal/20'
+                          : 'border-white/10 bg-white/5 hover:bg-white/10'
+                      }`}
+                    >
+                      {receipt.image_url && (
+                        <img
+                          src={receipt.image_url}
+                          alt="Receipt"
+                          className="w-full h-24 object-cover rounded-lg mb-2"
+                        />
+                      )}
+                      <p className="text-white font-medium">
+                        {formatCurrency(receipt.total_amount)}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        {formatDate(receipt.uploaded_at)}
+                      </p>
+                    </motion.div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-slate-400 text-center py-8">No existing receipts. Upload a new one!</p>
+              )}
             </div>
-          </div>
 
-          {/* Allocated Amount */}
-          {selectedReceipt && (
+            {selectedReceipt && (
+              <div>
+                <label className="block text-sm font-medium text-slate-200 mb-2">
+                  Allocated Amount (PKR)
+                </label>
+                <input
+                  type="number"
+                  value={allocatedAmount}
+                  onChange={(e) => setAllocatedAmount(e.target.value)}
+                  className="w-full px-4 py-2.5 sm:py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
+                  placeholder="Enter amount to allocate"
+                  max={selectedReceipt.total_amount}
+                  min="0"
+                  step="0.01"
+                  required
+                />
+                <p className="text-xs text-slate-400 mt-1">
+                  Max: {formatCurrency(selectedReceipt.total_amount)}
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3">
+              <motion.button
+                type="submit"
+                disabled={saving || !selectedReceipt || !allocatedAmount}
+                whileTap={{ scale: 0.96 }}
+                className="flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl disabled:opacity-50"
+              >
+                {saving ? 'Adding...' : 'Add Expense'}
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={onClose}
+                whileTap={{ scale: 0.96 }}
+                className="px-6 py-2.5 sm:py-3 glass-button text-slate-200 rounded-xl"
+              >
+                Cancel
+              </motion.button>
+            </div>
+          </form>
+        )}
+
+        {/* Upload New Receipt Mode */}
+        {mode === 'upload' && (
+          <form onSubmit={handleSubmitNew} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-slate-200 mb-3">
+                Receipt Image
+              </label>
+              {receiptPreview ? (
+                <div className="relative">
+                  <img
+                    src={receiptPreview}
+                    alt="Receipt Preview"
+                    className="w-full h-64 object-contain rounded-xl bg-black/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={removeFile}
+                    className="absolute top-2 right-2 p-2 bg-red-500/80 hover:bg-red-500 rounded-full transition-colors"
+                  >
+                    <X className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ) : (
+                <label className="flex flex-col items-center justify-center w-full h-48 glass-button border-2 border-dashed border-white/30 rounded-xl cursor-pointer hover:bg-white/10 transition-colors">
+                  <Upload className="w-10 h-10 text-slate-400 mb-3" />
+                  <span className="text-sm text-slate-300 font-medium">Click to upload receipt</span>
+                  <span className="text-xs text-slate-500 mt-1">PNG, JPG up to 5MB</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    required
+                  />
+                </label>
+              )}
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-slate-200 mb-2">
-                Allocated Amount (PKR)
+                Receipt Amount (PKR)
               </label>
               <input
                 type="number"
-                value={allocatedAmount}
-                onChange={(e) => setAllocatedAmount(e.target.value)}
-                className="w-full px-4 py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
-                placeholder="Enter amount to allocate"
-                max={selectedReceipt.total_amount}
+                value={manualAmount}
+                onChange={(e) => setManualAmount(e.target.value)}
+                className="w-full px-4 py-2.5 sm:py-3 glass-button text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-nature-teal"
+                placeholder="Enter receipt total amount"
                 min="0"
                 step="0.01"
                 required
               />
               <p className="text-xs text-slate-400 mt-1">
-                Max: {formatCurrency(selectedReceipt.total_amount)}
+                This amount will be fully allocated to this tussle
               </p>
             </div>
-          )}
 
-          <div className="flex gap-3">
-            <motion.button
-              type="submit"
-              disabled={saving || !selectedReceipt || !allocatedAmount}
-              whileTap={{ scale: 0.96 }}
-              className="flex-1 py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl disabled:opacity-50"
-            >
-              {saving ? 'Adding...' : 'Add Expense'}
-            </motion.button>
-            <motion.button
-              type="button"
-              onClick={onClose}
-              whileTap={{ scale: 0.96 }}
-              className="px-6 py-3 glass-button text-slate-200 rounded-xl"
-            >
-              Cancel
-            </motion.button>
-          </div>
-        </form>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <motion.button
+                type="submit"
+                disabled={saving || uploading || !receiptFile || !manualAmount}
+                whileTap={{ scale: 0.96 }}
+                className="flex-1 py-2.5 sm:py-3 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl disabled:opacity-50"
+              >
+                {uploading ? 'Uploading...' : saving ? 'Adding...' : 'Upload & Add Expense'}
+              </motion.button>
+              <motion.button
+                type="button"
+                onClick={onClose}
+                whileTap={{ scale: 0.96 }}
+                className="px-6 py-2.5 sm:py-3 glass-button text-slate-200 rounded-xl"
+              >
+                Cancel
+              </motion.button>
+            </div>
+          </form>
+        )}
       </motion.div>
     </motion.div>
   )
