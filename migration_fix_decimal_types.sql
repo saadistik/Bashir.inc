@@ -23,14 +23,15 @@ ALTER TABLE expense_allocations
 ALTER COLUMN allocated_amount TYPE NUMERIC(12,2);
 
 -- WORK ASSIGNMENTS TABLE - Convert payment columns
-ALTER TABLE work_assignments
-ALTER COLUMN rate TYPE NUMERIC(10,2);
-
--- Note: total_pay is a generated column (quantity * rate)
--- Drop and recreate it with NUMERIC type
+-- Must drop generated column FIRST before altering rate column
 ALTER TABLE work_assignments
 DROP COLUMN IF EXISTS total_pay;
 
+-- Now we can safely alter the rate column type
+ALTER TABLE work_assignments
+ALTER COLUMN rate TYPE NUMERIC(10,2);
+
+-- Recreate total_pay as a generated column with NUMERIC type
 ALTER TABLE work_assignments
 ADD COLUMN total_pay NUMERIC(12,2) GENERATED ALWAYS AS (quantity * rate) STORED;
 
