@@ -69,6 +69,16 @@ BEGIN
     now()
   );
 
+  INSERT INTO public.profiles (id, username, full_name, role, salary, id_card)
+  VALUES (zeeshan_user_id, 'zeeshan', 'Zeeshan', 'owner', 0, 'OWN-001')
+  ON CONFLICT (id) DO UPDATE
+  SET
+    username = EXCLUDED.username,
+    full_name = EXCLUDED.full_name,
+    role = EXCLUDED.role,
+    salary = EXCLUDED.salary,
+    id_card = EXCLUDED.id_card;
+
   -- Create owner: bashir
   INSERT INTO auth.users (
     id,
@@ -115,6 +125,16 @@ BEGIN
     now(),
     now()
   );
+
+  INSERT INTO public.profiles (id, username, full_name, role, salary, id_card)
+  VALUES (bashir_user_id, 'bashir', 'Bashir', 'owner', 0, 'OWN-002')
+  ON CONFLICT (id) DO UPDATE
+  SET
+    username = EXCLUDED.username,
+    full_name = EXCLUDED.full_name,
+    role = EXCLUDED.role,
+    salary = EXCLUDED.salary,
+    id_card = EXCLUDED.id_card;
 
   -- Create employee: farhan
   INSERT INTO auth.users (
@@ -163,18 +183,15 @@ BEGIN
     now()
   );
 
-  -- Ensure profile roles and optional ID cards are exactly as required
-  UPDATE public.profiles
-  SET role = 'owner', full_name = 'Zeeshan', username = 'zeeshan', salary = 0, id_card = 'OWN-001'
-  WHERE id = zeeshan_user_id;
-
-  UPDATE public.profiles
-  SET role = 'owner', full_name = 'Bashir', username = 'bashir', salary = 0, id_card = 'OWN-002'
-  WHERE id = bashir_user_id;
-
-  UPDATE public.profiles
-  SET role = 'employee', full_name = 'Farhan', username = 'farhan', salary = 50000, id_card = 'EMP-001'
-  WHERE id = farhan_user_id;
+  INSERT INTO public.profiles (id, username, full_name, role, salary, id_card)
+  VALUES (farhan_user_id, 'farhan', 'Farhan', 'employee', 50000, 'EMP-001')
+  ON CONFLICT (id) DO UPDATE
+  SET
+    username = EXCLUDED.username,
+    full_name = EXCLUDED.full_name,
+    role = EXCLUDED.role,
+    salary = EXCLUDED.salary,
+    id_card = EXCLUDED.id_card;
 END;
 $$;
 
