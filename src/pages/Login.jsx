@@ -183,15 +183,9 @@ export const Login = () => {
               whileTap={{ scale: 0.96 }}
               className="w-full py-4 bg-gradient-to-r from-purple-600 to-emerald-600 text-white font-semibold rounded-2xl hover:from-purple-700 hover:to-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50"
             >
-              {loading ? 'Signing in...' : loginSuccess ? 'Success! ✨' : 'Sign In'}
+              {loading ? 'Logging in...' : loginSuccess ? 'Success! ✨' : 'Login'}
             </motion.button>
           </form>
-
-          {/* Helper Text */}
-          <div className="mt-6 text-center text-xs text-slate-400 space-y-1">
-            <p>Allowed IDs: zeeshan, bashir (Owner) and farhan (Employee)</p>
-            <p>Use the password configured for each account in Supabase</p>
-          </div>
         </div>
       </motion.div>
     </div>
