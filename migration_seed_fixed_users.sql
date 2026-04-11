@@ -8,6 +8,8 @@
 
 BEGIN;
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Remove every existing app profile first (requested behavior)
 DELETE FROM public.profiles;
 
@@ -21,51 +23,144 @@ DECLARE
   farhan_user_id UUID;
 BEGIN
   -- Create owner: zeeshan
-  SELECT id INTO zeeshan_user_id
-  FROM auth.admin_create_user(
-    jsonb_build_object(
-      'email', 'zeeshan@bashir.inc',
-      'password', 'bashir123',
-      'email_confirm', true,
-      'user_metadata', jsonb_build_object(
-        'username', 'zeeshan',
-        'full_name', 'Zeeshan',
-        'role', 'owner',
-        'salary', 0
-      )
-    )
+  INSERT INTO auth.users (
+    id,
+    instance_id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'zeeshan@bashir.inc',
+    crypt('bashir123', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
+    '{"username":"zeeshan","full_name":"Zeeshan","role":"owner","salary":0}'::jsonb,
+    now(),
+    now()
+  ) RETURNING id INTO zeeshan_user_id;
+
+  INSERT INTO auth.identities (
+    id,
+    user_id,
+    provider_id,
+    identity_data,
+    provider,
+    last_sign_in_at,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    zeeshan_user_id,
+    'zeeshan@bashir.inc',
+    jsonb_build_object('sub', zeeshan_user_id::text, 'email', 'zeeshan@bashir.inc'),
+    'email',
+    now(),
+    now(),
+    now()
   );
 
   -- Create owner: bashir
-  SELECT id INTO bashir_user_id
-  FROM auth.admin_create_user(
-    jsonb_build_object(
-      'email', 'bashir@bashir.inc',
-      'password', 'bashir123',
-      'email_confirm', true,
-      'user_metadata', jsonb_build_object(
-        'username', 'bashir',
-        'full_name', 'Bashir',
-        'role', 'owner',
-        'salary', 0
-      )
-    )
+  INSERT INTO auth.users (
+    id,
+    instance_id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'bashir@bashir.inc',
+    crypt('bashir123', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
+    '{"username":"bashir","full_name":"Bashir","role":"owner","salary":0}'::jsonb,
+    now(),
+    now()
+  ) RETURNING id INTO bashir_user_id;
+
+  INSERT INTO auth.identities (
+    id,
+    user_id,
+    provider_id,
+    identity_data,
+    provider,
+    last_sign_in_at,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    bashir_user_id,
+    'bashir@bashir.inc',
+    jsonb_build_object('sub', bashir_user_id::text, 'email', 'bashir@bashir.inc'),
+    'email',
+    now(),
+    now(),
+    now()
   );
 
   -- Create employee: farhan
-  SELECT id INTO farhan_user_id
-  FROM auth.admin_create_user(
-    jsonb_build_object(
-      'email', 'farhan@bashir.inc',
-      'password', 'bashir123',
-      'email_confirm', true,
-      'user_metadata', jsonb_build_object(
-        'username', 'farhan',
-        'full_name', 'Farhan',
-        'role', 'employee',
-        'salary', 50000
-      )
-    )
+  INSERT INTO auth.users (
+    id,
+    instance_id,
+    aud,
+    role,
+    email,
+    encrypted_password,
+    email_confirmed_at,
+    raw_app_meta_data,
+    raw_user_meta_data,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'farhan@bashir.inc',
+    crypt('bashir123', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
+    '{"username":"farhan","full_name":"Farhan","role":"employee","salary":50000}'::jsonb,
+    now(),
+    now()
+  ) RETURNING id INTO farhan_user_id;
+
+  INSERT INTO auth.identities (
+    id,
+    user_id,
+    provider_id,
+    identity_data,
+    provider,
+    last_sign_in_at,
+    created_at,
+    updated_at
+  ) VALUES (
+    gen_random_uuid(),
+    farhan_user_id,
+    'farhan@bashir.inc',
+    jsonb_build_object('sub', farhan_user_id::text, 'email', 'farhan@bashir.inc'),
+    'email',
+    now(),
+    now(),
+    now()
   );
 
   -- Ensure profile roles and optional ID cards are exactly as required
