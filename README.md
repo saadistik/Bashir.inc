@@ -95,6 +95,9 @@ A Next-Gen Manufacturing ERP System with a "Nature Glass" aesthetic, featuring a
 6. **Open Browser**
    Navigate to `http://localhost:3000`
 
+7. **Apply Production Auth Security**
+   - Follow `AUTH_SECURITY_HARDENING.md` for rate limits, brute-force controls, CAPTCHA, and session hardening.
+
 ## 🎨 Design System
 
 ### Colors

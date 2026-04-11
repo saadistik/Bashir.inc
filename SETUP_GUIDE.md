@@ -304,11 +304,17 @@ Your Supabase backend is already live - no extra deployment needed.
 - [ ] Change all default passwords
 - [ ] Set up proper email authentication
 - [ ] Configure Supabase security rules
+- [ ] Apply auth hardening from AUTH_SECURITY_HARDENING.md
 - [ ] Add error tracking (Sentry)
 - [ ] Set up analytics
 - [ ] Configure backup strategy
 - [ ] Add terms of service
 - [ ] Set up SSL certificate
+
+### Auth Security Hardening
+For production auth security (rate limits, brute-force resistance, CAPTCHA, and session hardening), follow:
+
+- AUTH_SECURITY_HARDENING.md
 
 ---
 
