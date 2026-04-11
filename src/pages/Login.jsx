@@ -189,8 +189,8 @@ export const Login = () => {
 
           {/* Helper Text */}
           <div className="mt-6 text-center text-xs text-slate-400 space-y-1">
-            <p>Demo: owner / bashir123 (Owner Dashboard)</p>
-            <p>Demo: ali / bashir123 (Employee View)</p>
+            <p>Allowed IDs: zeeshan, bashir (Owner) and farhan (Employee)</p>
+            <p>Use the password configured for each account in Supabase</p>
           </div>
         </div>
       </motion.div>

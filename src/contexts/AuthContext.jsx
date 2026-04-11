@@ -2,6 +2,16 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext({})
+const ALLOWED_USERNAMES = new Set(['zeeshan', 'bashir', 'farhan'])
+
+const normalizeUsername = (value) => (value || '').trim().toLowerCase()
+
+const isAllowedProfile = (currentProfile) => {
+  if (!currentProfile) return false
+  const normalizedUsername = normalizeUsername(currentProfile.username)
+  const isAllowedRole = currentProfile.role === 'owner' || currentProfile.role === 'employee'
+  return isAllowedRole && ALLOWED_USERNAMES.has(normalizedUsername)
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext)
@@ -50,6 +60,14 @@ export const AuthProvider = ({ children }) => {
         .single()
 
       if (error) throw error
+
+      if (!isAllowedProfile(data)) {
+        await supabase.auth.signOut()
+        setUser(null)
+        setProfile(null)
+        return
+      }
+
       setProfile(data)
     } catch (error) {
       console.error('Error fetching profile:', error)
@@ -60,8 +78,14 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (username, password) => {
     try {
+      const normalizedUsername = normalizeUsername(username)
+
+      if (!ALLOWED_USERNAMES.has(normalizedUsername)) {
+        throw new Error('This account is not allowed to access the system')
+      }
+
       // Map username to email format
-      const email = `${username}@bashir.inc`
+      const email = `${normalizedUsername}@bashir.inc`
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -69,6 +93,18 @@ export const AuthProvider = ({ children }) => {
       })
 
       if (error) throw error
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('username, role')
+        .eq('id', data.user.id)
+        .single()
+
+      if (profileError || !isAllowedProfile(profileData)) {
+        await supabase.auth.signOut()
+        throw new Error('This account is not allowed to access the system')
+      }
+
       return { data, error: null }
     } catch (error) {
       return { data: null, error }
