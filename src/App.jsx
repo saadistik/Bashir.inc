@@ -37,12 +37,8 @@ function AppRoutes() {
           <AppLayout />
         </ProtectedRoute>
       }>
-        {/* Employee Routes */}
-        <Route path="/home" element={
-          <ProtectedRoute requiredRole="employee">
-            <Home />
-          </ProtectedRoute>
-        } />
+        {/* Shared Work Routes */}
+        <Route path="/home" element={<Home />} />
 
         {/* Admin Routes */}
         <Route path="/dashboard" element={

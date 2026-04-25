@@ -5,7 +5,7 @@ import { Home, Building2, Calendar, Users, User, Plus, LogOut } from 'lucide-rea
 import { useAuth } from '../../contexts/AuthContext'
 
 const navItems = [
-  { path: '/home', icon: Home, label: 'Home', employeeOnly: true },
+  { path: '/home', icon: Home, label: 'Home' },
   { path: '/dashboard', icon: Home, label: 'Dashboard', adminOnly: true },
   { path: '/companies', icon: Building2, label: 'Companies' },
   { path: '/calendar', icon: Calendar, label: 'Calendar' },
@@ -18,9 +18,9 @@ export const AppLayout = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const [showAddModal, setShowAddModal] = useState(false)
+  const canAddOrders = profile?.role === 'employee' || profile?.role === 'admin'
 
   const filteredNavItems = navItems.filter(item => {
-    if (item.employeeOnly && profile?.role !== 'employee') return false
     if (item.adminOnly && profile?.role !== 'admin') return false
     return true
   })
@@ -196,7 +196,7 @@ export const AppLayout = () => {
         </div>
 
         {/* Floating Add Button */}
-        {profile?.role === 'employee' && (
+        {canAddOrders && (
           <motion.button
             onClick={handleAddClick}
             whileTap={{ scale: 0.9 }}
@@ -209,7 +209,7 @@ export const AppLayout = () => {
       </div>
 
       {/* Desktop Add Button */}
-      {profile?.role === 'employee' && (
+      {canAddOrders && (
         <motion.button
           onClick={handleAddClick}
           whileTap={{ scale: 0.9 }}
