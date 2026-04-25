@@ -5,12 +5,6 @@ import { useAuth } from '../contexts/AuthContext'
 import { LoginMascot } from '../components/auth/LoginMascot'
 import { Lock, User } from 'lucide-react'
 
-const MAX_FAILED_ATTEMPTS = 5
-const LOCKOUT_MINUTES = 15
-const LOCKOUT_MS = LOCKOUT_MINUTES * 60 * 1000
-const LOCKOUT_STORAGE_KEY = 'bashir_inc_login_lockout_until'
-const ATTEMPT_STORAGE_KEY = 'bashir_inc_login_attempts'
-
 export const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -19,17 +13,11 @@ export const Login = () => {
   const [loginSuccess, setLoginSuccess] = useState(false)
   const [isTypingUsername, setIsTypingUsername] = useState(false)
   const [isTypingPassword, setIsTypingPassword] = useState(false)
-  const [lockoutUntil, setLockoutUntil] = useState(null)
 
   const { signIn, profile } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
-    const storedLockout = Number(localStorage.getItem(LOCKOUT_STORAGE_KEY))
-    if (storedLockout && storedLockout > Date.now()) {
-      setLockoutUntil(storedLockout)
-    }
-
     // Redirect based on role if already logged in
     if (profile) {
       if (profile.role === 'admin') {
@@ -40,48 +28,18 @@ export const Login = () => {
     }
   }, [profile, navigate])
 
-  const getRemainingLockoutMinutes = () => {
-    if (!lockoutUntil) return 0
-    const remainingMs = lockoutUntil - Date.now()
-    return remainingMs > 0 ? Math.ceil(remainingMs / 60000) : 0
-  }
-
-  const isLockedOut = getRemainingLockoutMinutes() > 0
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
-
-    const activeLockout = Number(localStorage.getItem(LOCKOUT_STORAGE_KEY))
-    if (activeLockout && activeLockout > Date.now()) {
-      setLockoutUntil(activeLockout)
-      const remainingMinutes = Math.ceil((activeLockout - Date.now()) / 60000)
-      setError(`Too many failed attempts. Try again in ${remainingMinutes} minute(s).`)
-      return
-    }
 
     setLoading(true)
 
     const { data, error } = await signIn(username, password)
 
     if (error) {
-      const attemptCount = Number(localStorage.getItem(ATTEMPT_STORAGE_KEY) || '0') + 1
-      localStorage.setItem(ATTEMPT_STORAGE_KEY, String(attemptCount))
-
-      if (attemptCount >= MAX_FAILED_ATTEMPTS) {
-        const newLockoutUntil = Date.now() + LOCKOUT_MS
-        localStorage.setItem(LOCKOUT_STORAGE_KEY, String(newLockoutUntil))
-        localStorage.removeItem(ATTEMPT_STORAGE_KEY)
-        setLockoutUntil(newLockoutUntil)
-        setError(`Too many failed attempts. Try again in ${LOCKOUT_MINUTES} minutes.`)
-      } else {
-        setError('Invalid username or password')
-      }
+      setError(error?.message || 'Invalid username or password')
       setLoading(false)
     } else {
-      localStorage.removeItem(ATTEMPT_STORAGE_KEY)
-      localStorage.removeItem(LOCKOUT_STORAGE_KEY)
-      setLockoutUntil(null)
       setLoginSuccess(true)
       
       // Wait for animation then redirect based on role
@@ -222,7 +180,7 @@ export const Login = () => {
 
             <motion.button
               type="submit"
-              disabled={loading || loginSuccess || isLockedOut}
+              disabled={loading || loginSuccess}
               whileTap={{ scale: 0.96 }}
               className="w-full py-4 bg-gradient-to-r from-purple-600 to-emerald-600 text-white font-semibold rounded-2xl hover:from-purple-700 hover:to-emerald-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50"
             >

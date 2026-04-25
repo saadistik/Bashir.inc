@@ -190,7 +190,7 @@ CREATE OR REPLACE FUNCTION public.login_user(p_username text, p_password text)
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_profile public.profiles%ROWTYPE;
@@ -199,7 +199,7 @@ BEGIN
   INTO v_profile
   FROM public.profiles
   WHERE lower(username) = lower(trim(p_username))
-    AND password_hash = crypt(p_password, password_hash)
+    AND password_hash = extensions.crypt(p_password, password_hash)
   LIMIT 1;
 
   IF NOT FOUND THEN
@@ -248,7 +248,7 @@ INSERT INTO public.profiles (username, password_hash, full_name, role, salary, i
 VALUES
   (
     'Bashir',
-    crypt('Bashir@123', gen_salt('bf')),
+    extensions.crypt('Bashir@123', extensions.gen_salt('bf')),
     'Bashir',
     'admin',
     0,
@@ -256,7 +256,7 @@ VALUES
   ),
   (
     'Farhan',
-    crypt('Farhan@123', gen_salt('bf')),
+    extensions.crypt('Farhan@123', extensions.gen_salt('bf')),
     'Farhan',
     'employee',
     50000,
