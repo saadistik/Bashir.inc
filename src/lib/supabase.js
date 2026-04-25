@@ -19,6 +19,7 @@ export const supabase = isConfigured
         signInWithPassword: () => Promise.resolve({ data: null, error: new Error('Not configured') }),
         signOut: () => Promise.resolve({ error: null }),
       },
+      rpc: () => Promise.resolve({ data: null, error: new Error('Not configured') }),
       from: () => ({
         select: () => Promise.resolve({ data: [], error: null }),
         insert: () => Promise.resolve({ data: null, error: new Error('Not configured') }),

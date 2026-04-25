@@ -32,7 +32,7 @@ export const Login = () => {
 
     // Redirect based on role if already logged in
     if (profile) {
-      if (profile.role === 'owner') {
+      if (profile.role === 'admin') {
         navigate('/dashboard')
       } else {
         navigate('/home')

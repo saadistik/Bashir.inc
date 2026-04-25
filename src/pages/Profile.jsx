@@ -40,12 +40,12 @@ export const Profile = () => {
             <h2 className="text-3xl font-bold text-white mb-2">{profile?.full_name}</h2>
             <div className="flex items-center gap-3 mb-4">
               <span className={`px-4 py-2 rounded-xl font-medium ${
-                profile?.role === 'owner'
+                profile?.role === 'admin'
                   ? 'bg-nature-gold/30 text-nature-gold'
                   : 'bg-nature-teal/30 text-nature-mint'
               }`}>
-                {profile?.role === 'owner' ? (
-                  <><Shield className="w-4 h-4 inline mr-2" />Owner</>
+                {profile?.role === 'admin' ? (
+                  <><Shield className="w-4 h-4 inline mr-2" />Admin</>
                 ) : (
                   <><User className="w-4 h-4 inline mr-2" />Employee</>
                 )}

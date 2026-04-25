@@ -91,7 +91,7 @@ export const Calendar = () => {
         <div>
           <h1 className="text-4xl font-bold text-white mb-2">Calendar</h1>
           <p className="text-slate-300">
-            {profile?.role === 'owner' ? 'Click on any date to create an event' : 'Track deadlines and events'}
+            {profile?.role === 'admin' ? 'Click on any date to create an event' : 'Track deadlines and events'}
           </p>
         </div>
       </motion.div>
@@ -159,7 +159,7 @@ export const Calendar = () => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
                   setSelectedDate(date)
-                  if (profile?.role === 'owner') {
+                  if (profile?.role === 'admin') {
                     setShowCreateModal(true)
                   }
                 }}
@@ -169,7 +169,7 @@ export const Calendar = () => {
                     : isCurrentDay
                     ? 'bg-purple-500/30 border-2 border-purple-500/50'
                     : 'bg-white/5 hover:bg-white/10'
-                } ${profile?.role === 'owner' ? 'cursor-pointer' : ''}`}
+                } ${profile?.role === 'admin' ? 'cursor-pointer' : ''}`}
               >
                 <span className={`text-sm font-medium ${
                   isSelected || isCurrentDay ? 'text-white' : 'text-slate-200'

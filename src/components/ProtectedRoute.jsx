@@ -20,7 +20,7 @@ export const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (requiredRole && profile?.role !== requiredRole) {
     // Redirect based on role
-    if (profile?.role === 'owner') {
+    if (profile?.role === 'admin') {
       return <Navigate to="/dashboard" />
     } else {
       return <Navigate to="/home" />

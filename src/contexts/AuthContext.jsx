@@ -2,14 +2,15 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
 const AuthContext = createContext({})
-const ALLOWED_USERNAMES = new Set(['zeeshan', 'bashir', 'farhan'])
+const SESSION_STORAGE_KEY = 'bashir_inc_local_session'
+const ALLOWED_USERNAMES = new Set(['bashir', 'farhan'])
 
 const normalizeUsername = (value) => (value || '').trim().toLowerCase()
 
 const isAllowedProfile = (currentProfile) => {
   if (!currentProfile) return false
   const normalizedUsername = normalizeUsername(currentProfile.username)
-  const isAllowedRole = currentProfile.role === 'owner' || currentProfile.role === 'employee'
+  const isAllowedRole = currentProfile.role === 'admin' || currentProfile.role === 'employee'
   return isAllowedRole && ALLOWED_USERNAMES.has(normalizedUsername)
 }
 
@@ -27,50 +28,58 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      } else {
+    const initializeSession = async () => {
+      try {
+        const savedSession = localStorage.getItem(SESSION_STORAGE_KEY)
+        if (!savedSession) {
+          setLoading(false)
+          return
+        }
+
+        const parsed = JSON.parse(savedSession)
+        const sessionId = parsed?.id
+
+        if (!sessionId) {
+          localStorage.removeItem(SESSION_STORAGE_KEY)
+          setLoading(false)
+          return
+        }
+
+        await fetchProfile(sessionId)
+      } catch (error) {
+        console.error('Error restoring session:', error)
+        localStorage.removeItem(SESSION_STORAGE_KEY)
         setLoading(false)
       }
-    })
+    }
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) {
-        fetchProfile(session.user.id)
-      } else {
-        setProfile(null)
-        setLoading(false)
-      }
-    })
-
-    return () => subscription.unsubscribe()
+    initializeSession()
   }, [])
 
-  const fetchProfile = async (userId) => {
+  const fetchProfile = async (profileId) => {
     try {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
-        .single()
+        .eq('id', profileId)
+        .maybeSingle()
 
       if (error) throw error
 
       if (!isAllowedProfile(data)) {
-        await supabase.auth.signOut()
+        localStorage.removeItem(SESSION_STORAGE_KEY)
         setUser(null)
         setProfile(null)
         return
       }
 
+      setUser({ id: data.id, username: data.username, role: data.role })
       setProfile(data)
     } catch (error) {
       console.error('Error fetching profile:', error)
+      localStorage.removeItem(SESSION_STORAGE_KEY)
+      setUser(null)
+      setProfile(null)
     } finally {
       setLoading(false)
     }
@@ -84,35 +93,41 @@ export const AuthProvider = ({ children }) => {
         throw new Error('This account is not allowed to access the system')
       }
 
-      // Map username to email format
-      const email = `${normalizedUsername}@bashir.inc`
-      
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const { data, error } = await supabase.rpc('login_user', {
+        p_username: normalizedUsername,
+        p_password: password,
       })
 
       if (error) throw error
 
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('username, role')
-        .eq('id', data.user.id)
-        .single()
+      if (!data) {
+        throw new Error('Invalid username or password')
+      }
 
-      if (profileError || !isAllowedProfile(profileData)) {
-        await supabase.auth.signOut()
+      const loggedInProfile = Array.isArray(data) ? data[0] : data
+
+      if (!isAllowedProfile(loggedInProfile)) {
         throw new Error('This account is not allowed to access the system')
       }
 
-      return { data, error: null }
+      const nextUser = {
+        id: loggedInProfile.id,
+        username: loggedInProfile.username,
+        role: loggedInProfile.role,
+      }
+
+      setUser(nextUser)
+      setProfile(loggedInProfile)
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ id: loggedInProfile.id }))
+
+      return { data: { user: nextUser }, error: null }
     } catch (error) {
       return { data: null, error }
     }
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    localStorage.removeItem(SESSION_STORAGE_KEY)
     setUser(null)
     setProfile(null)
   }

@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext'
 
 const navItems = [
   { path: '/home', icon: Home, label: 'Home', employeeOnly: true },
-  { path: '/dashboard', icon: Home, label: 'Dashboard', ownerOnly: true },
+  { path: '/dashboard', icon: Home, label: 'Dashboard', adminOnly: true },
   { path: '/companies', icon: Building2, label: 'Companies' },
   { path: '/calendar', icon: Calendar, label: 'Calendar' },
   { path: '/workers', icon: Users, label: 'Workers' },
@@ -21,7 +21,7 @@ export const AppLayout = () => {
 
   const filteredNavItems = navItems.filter(item => {
     if (item.employeeOnly && profile?.role !== 'employee') return false
-    if (item.ownerOnly && profile?.role !== 'owner') return false
+    if (item.adminOnly && profile?.role !== 'admin') return false
     return true
   })
 

@@ -22,7 +22,7 @@ A Next-Gen Manufacturing ERP System with a "Nature Glass" aesthetic, featuring a
 - Company and worker management
 - Calendar with deadline tracking
 
-#### Owner Workflow
+#### Admin Workflow
 - Financial dashboard with charts (Recharts)
 - Profit analysis: Revenue - Materials - Labor - Salaries
 - Weekly/Monthly profit trends
@@ -60,32 +60,20 @@ A Next-Gen Manufacturing ERP System with a "Nature Glass" aesthetic, featuring a
 
 3. **Run Database Schema**
    - Go to Supabase Dashboard → SQL Editor
-   - Copy and paste the contents of `supabase_schema.sql`
+   - Copy and paste the contents of `database_full_setup.sql`
    - Execute the SQL
 
-4. **Create Demo Users**
+4. **Use Built-In Login Users**
    
-   In Supabase Dashboard → Authentication → Users, create:
-   
-   **Owner Account:**
-   - Email: `owner@bashir.inc`
-   - Password: `bashir123`
-   - Then run in SQL Editor:
-     ```sql
-     UPDATE profiles 
-     SET username = 'owner', full_name = 'Business Owner', role = 'owner', salary = 0
-     WHERE id = 'your_owner_user_id';
-     ```
+   The SQL setup creates two fixed app users automatically:
+
+   **Admin Account:**
+   - Username: `Bashir`
+   - Password: `Bashir@123`
 
    **Employee Account:**
-   - Email: `ali@bashir.inc`
-   - Password: `bashir123`
-   - Then run in SQL Editor:
-     ```sql
-     UPDATE profiles 
-     SET username = 'ali', full_name = 'Ali Khan', role = 'employee', salary = 50000
-     WHERE id = 'your_employee_user_id';
-     ```
+   - Username: `Farhan`
+   - Password: `Farhan@123`
 
 5. **Start Development Server**
    ```bash
@@ -128,11 +116,11 @@ A Next-Gen Manufacturing ERP System with a "Nature Glass" aesthetic, featuring a
 ## 🔐 Authentication Flow
 
 1. User enters username and password
-2. Username is mapped to `username@bashir.inc` email format
-3. Supabase authenticates user
-4. Profile is fetched with role
+2. App calls the SQL function `public.login_user(username, password)`
+3. Profile data is returned when credentials are valid
+4. Local app session is stored in browser storage
 5. User is redirected based on role:
-   - Owner → `/dashboard`
+   - Admin → `/dashboard`
    - Employee → `/home`
 
 ## 📊 Data Logic
@@ -178,7 +166,7 @@ Bashir.inc/
 │   ├── pages/
 │   │   ├── Login.jsx                # Login page
 │   │   ├── Home.jsx                 # Employee dashboard
-│   │   ├── Dashboard.jsx            # Owner dashboard with charts
+│   │   ├── Dashboard.jsx            # Admin dashboard with charts
 │   │   ├── Companies.jsx            # Company list
 │   │   ├── CompanyDetail.jsx        # Company detail with tussles
 │   │   ├── TussleDetail.jsx         # Tussle workspace (tabs)
@@ -188,7 +176,7 @@ Bashir.inc/
 │   ├── App.jsx                      # Main app with routing
 │   ├── main.jsx                     # Entry point
 │   └── index.css                    # Global styles
-├── supabase_schema.sql              # Complete database schema
+├── database_full_setup.sql          # Complete database + fixed users
 ├── package.json
 ├── tailwind.config.js               # Tailwind with custom theme
 ├── vite.config.js
@@ -208,7 +196,7 @@ Bashir.inc/
 2. **Materials**: Receipt gallery with allocation system
 3. **Labor**: Worker list with auto-calculated totals
 
-### Owner Dashboard Charts
+### Admin Dashboard Charts
 - Area chart showing revenue, costs, and profit over time
 - Pie chart for order status distribution
 - Cost breakdown with progress bars
@@ -238,5 +226,5 @@ Created by a Principal Full-Stack Architect & Senior UI/UX Motion Designer
 ---
 
 **Demo Credentials:**
-- Owner: `owner` / `bashir123`
-- Employee: `ali` / `bashir123`
+- Admin: `Bashir` / `Bashir@123`
+- Employee: `Farhan` / `Farhan@123`

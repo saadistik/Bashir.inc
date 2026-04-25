@@ -44,9 +44,9 @@ function AppRoutes() {
           </ProtectedRoute>
         } />
 
-        {/* Owner Routes */}
+        {/* Admin Routes */}
         <Route path="/dashboard" element={
-          <ProtectedRoute requiredRole="owner">
+          <ProtectedRoute requiredRole="admin">
             <Dashboard />
           </ProtectedRoute>
         } />
@@ -63,7 +63,7 @@ function AppRoutes() {
       {/* Root redirect based on role */}
       <Route path="/" element={
         profile ? (
-          <Navigate to={profile.role === 'owner' ? '/dashboard' : '/home'} replace />
+          <Navigate to={profile.role === 'admin' ? '/dashboard' : '/home'} replace />
         ) : (
           <Navigate to="/login" replace />
         )
