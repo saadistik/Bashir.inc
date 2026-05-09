@@ -16,6 +16,7 @@ export const TussleDetail = () => {
   const [tussle, setTussle] = useState(null)
   const [company, setCompany] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     fetchTussleData()
@@ -23,6 +24,7 @@ export const TussleDetail = () => {
 
   const fetchTussleData = async () => {
     try {
+      setError(null)
       const { data: tussleData, error: tussleError } = await supabase
         .from('tussles')
         .select(`
@@ -33,10 +35,14 @@ export const TussleDetail = () => {
         .single()
 
       if (tussleError) throw tussleError
+      if (!tussleData) {
+        throw new Error('Tussle not found. It may have been deleted or the ID is invalid.')
+      }
       setTussle(tussleData)
       setCompany(tussleData.companies)
     } catch (error) {
       console.error('Error fetching tussle:', error)
+      setError(error?.message || 'Failed to load tussle details')
     } finally {
       setLoading(false)
     }
@@ -60,6 +66,23 @@ export const TussleDetail = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="glass-panel p-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="text-red-400 text-lg mb-4">⚠️ Error</div>
+          <p className="text-white mb-6">{error}</p>
+          <button
+            onClick={() => navigate('/companies')}
+            className="px-6 py-2 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl"
+          >
+            Back to Companies
+          </button>
         </div>
       </div>
     )
