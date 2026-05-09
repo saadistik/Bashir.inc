@@ -8,6 +8,14 @@ import { supabase } from './supabase'
  */
 export const uploadImage = async (file, bucket = 'tussle-images') => {
   try {
+    if (!supabase?.storage?.from) {
+      throw new Error('Supabase Storage is unavailable. Check your Supabase connection and bucket setup.')
+    }
+
+    if (!file) {
+      throw new Error('No file selected')
+    }
+
     // Validate file type
     if (!file.type.startsWith('image/')) {
       throw new Error('File must be an image')
@@ -31,7 +39,9 @@ export const uploadImage = async (file, bucket = 'tussle-images') => {
         upsert: false
       })
 
-    if (error) throw error
+    if (error) {
+      throw new Error(`Failed to upload to bucket "${bucket}": ${error.message}`)
+    }
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage

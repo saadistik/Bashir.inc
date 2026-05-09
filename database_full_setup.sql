@@ -14,6 +14,13 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- CLEANUP (SAFE FOR RE-RUNS)
 -- =====================================================
 
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON public.profiles;
+DROP TRIGGER IF EXISTS update_companies_updated_at ON public.companies;
+DROP TRIGGER IF EXISTS update_tussles_updated_at ON public.tussles;
+DROP TRIGGER IF EXISTS update_workers_updated_at ON public.workers;
+DROP TRIGGER IF EXISTS update_work_assignments_updated_at ON public.work_assignments;
+DROP TRIGGER IF EXISTS update_events_updated_at ON public.events;
+
 DROP FUNCTION IF EXISTS public.update_updated_at_column();
 DROP FUNCTION IF EXISTS public.login_user(text, text);
 
@@ -239,6 +246,55 @@ ALTER TABLE public.calendar_events DISABLE ROW LEVEL SECURITY;
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO anon, authenticated;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated;
+
+-- =====================================================
+-- STORAGE BUCKETS AND POLICIES
+-- =====================================================
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES
+  ('tussle-images', 'tussle-images', true),
+  ('receipts', 'receipts', true)
+ON CONFLICT (id) DO UPDATE
+SET public = EXCLUDED.public,
+    name = EXCLUDED.name;
+
+DROP POLICY IF EXISTS "Public read tussle images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated upload tussle images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated delete tussle images" ON storage.objects;
+DROP POLICY IF EXISTS "Public read receipts" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated upload receipts" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated delete receipts" ON storage.objects;
+
+CREATE POLICY "Public read tussle images"
+  ON storage.objects FOR SELECT
+  TO public
+  USING (bucket_id = 'tussle-images');
+
+CREATE POLICY "Authenticated upload tussle images"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'tussle-images');
+
+CREATE POLICY "Authenticated delete tussle images"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'tussle-images');
+
+CREATE POLICY "Public read receipts"
+  ON storage.objects FOR SELECT
+  TO public
+  USING (bucket_id = 'receipts');
+
+CREATE POLICY "Authenticated upload receipts"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'receipts');
+
+CREATE POLICY "Authenticated delete receipts"
+  ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'receipts');
 
 -- =====================================================
 -- FIXED APP USERS

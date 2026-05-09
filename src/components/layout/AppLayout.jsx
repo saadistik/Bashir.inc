@@ -234,31 +234,32 @@ export const AppLayout = () => {
 const AddOrderModal = ({ onClose }) => {
   const [clientName, setClientName] = useState('')
   const [searching, setSearching] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate()
 
   const handleSearch = async () => {
     if (!clientName.trim()) return
 
     setSearching(true)
+    setErrorMessage('')
     
-    // Search for existing company
-    const { data: companies, error } = await supabase
-      .from('companies')
-      .select('*')
-      .ilike('name', `%${clientName}%`)
-      .limit(1)
+    try {
+      // Search for existing company
+      const { data: companies, error } = await supabase
+        .from('companies')
+        .select('*')
+        .ilike('name', `%${clientName}%`)
+        .limit(1)
 
-    if (error) {
-      console.error('Error searching companies:', error)
-      setSearching(false)
-      return
-    }
+      if (error) throw error
 
-    if (companies && companies.length > 0) {
-      // Company exists - redirect to company page
-      navigate(`/companies/${companies[0].id}?openTussle=true`)
-      onClose()
-    } else {
+      if (companies && companies.length > 0) {
+        // Company exists - redirect to company page
+        navigate(`/companies/${companies[0].id}?openTussle=true`)
+        onClose()
+        return
+      }
+
       // Create new company
       const { data: newCompany, error: createError } = await supabase
         .from('companies')
@@ -266,15 +267,16 @@ const AddOrderModal = ({ onClose }) => {
         .select()
         .single()
 
-      if (createError) {
-        console.error('Error creating company:', createError)
-        setSearching(false)
-        return
-      }
+      if (createError) throw createError
 
       // Redirect to new company page
       navigate(`/companies/${newCompany.id}?openTussle=true`)
       onClose()
+    } catch (error) {
+      console.error('Error creating or finding company:', error)
+      setErrorMessage(error?.message || 'Unable to open the company. Check the database connection and try again.')
+    } finally {
+      setSearching(false)
     }
   }
 
@@ -296,6 +298,12 @@ const AddOrderModal = ({ onClose }) => {
         <h2 className="text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-6">Add New Order</h2>
         
         <div className="space-y-4">
+          {errorMessage && (
+            <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {errorMessage}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
               Client Name
