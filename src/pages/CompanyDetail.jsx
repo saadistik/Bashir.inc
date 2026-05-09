@@ -259,12 +259,17 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
         .single()
 
       if (error) throw error
+      if (!data || !data.id) {
+        throw new Error('Failed to create tussle: No ID returned from database. Please try again.')
+      }
 
       // Redirect to the new tussle detail page
       navigate(`/tussles/${data.id}`)
     } catch (error) {
       console.error('Error creating tussle:', error)
-      alert(error.message || 'Error creating tussle. Please try again.')
+      const errorMsg = error?.message || 'Error creating tussle. Please try again.'
+      alert(errorMsg)
+      console.error('Full error details:', error)
     } finally {
       setSaving(false)
       setUploading(false)
