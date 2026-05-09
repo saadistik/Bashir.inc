@@ -220,6 +220,17 @@ const CreateTussleModal = ({ companyId, onClose, onSuccess }) => {
     try {
       let imageUrl = null
 
+      const { data: existingCompany, error: companyError } = await supabase
+        .from('companies')
+        .select('id')
+        .eq('id', companyId)
+        .maybeSingle()
+
+      if (companyError) throw companyError
+      if (!existingCompany) {
+        throw new Error('This company no longer exists in the database. Go back to Companies and open the company again.')
+      }
+
       // Upload image if selected
       if (imageFile) {
         setUploading(true)

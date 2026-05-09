@@ -273,12 +273,12 @@ CREATE POLICY "Public read tussle images"
 
 CREATE POLICY "Authenticated upload tussle images"
   ON storage.objects FOR INSERT
-  TO authenticated
+  TO public
   WITH CHECK (bucket_id = 'tussle-images');
 
 CREATE POLICY "Authenticated delete tussle images"
   ON storage.objects FOR DELETE
-  TO authenticated
+  TO public
   USING (bucket_id = 'tussle-images');
 
 CREATE POLICY "Public read receipts"
@@ -288,12 +288,12 @@ CREATE POLICY "Public read receipts"
 
 CREATE POLICY "Authenticated upload receipts"
   ON storage.objects FOR INSERT
-  TO authenticated
+  TO public
   WITH CHECK (bucket_id = 'receipts');
 
 CREATE POLICY "Authenticated delete receipts"
   ON storage.objects FOR DELETE
-  TO authenticated
+  TO public
   USING (bucket_id = 'receipts');
 
 -- =====================================================
