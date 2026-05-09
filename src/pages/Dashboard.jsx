@@ -20,6 +20,7 @@ export const Dashboard = () => {
   const [statusData, setStatusData] = useState([])
   const [timeFilter, setTimeFilter] = useState('weekly') // weekly or monthly
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     fetchDashboardData()
@@ -27,6 +28,7 @@ export const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      setError(null)
       // Fetch all tussles with related data
       const { data: tussles, error: tusslesError } = await supabase
         .from('tussles')
@@ -85,6 +87,7 @@ export const Dashboard = () => {
 
     } catch (error) {
       console.error('Error fetching dashboard data:', error)
+      setError(error?.message || 'Failed to load dashboard data')
     } finally {
       setLoading(false)
     }

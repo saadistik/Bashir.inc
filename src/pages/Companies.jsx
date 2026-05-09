@@ -8,6 +8,7 @@ import { formatCurrency } from '../lib/utils'
 export const Companies = () => {
   const [companies, setCompanies] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [searchTerm, setSearchTerm] = useState('')
   const navigate = useNavigate()
   const location = useLocation()
@@ -18,6 +19,7 @@ export const Companies = () => {
 
   const fetchCompanies = async () => {
     try {
+      setError(null)
       const { data, error } = await supabase
         .from('companies')
         .select(`
@@ -41,6 +43,7 @@ export const Companies = () => {
       setCompanies(companiesWithStats)
     } catch (error) {
       console.error('Error fetching companies:', error)
+      setError(error?.message || 'Failed to load companies')
     } finally {
       setLoading(false)
     }
@@ -55,6 +58,23 @@ export const Companies = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="glass-panel p-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="text-red-400 text-lg mb-4">⚠️ Error</div>
+          <p className="text-white mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl"
+          >
+            Retry
+          </button>
         </div>
       </div>
     )

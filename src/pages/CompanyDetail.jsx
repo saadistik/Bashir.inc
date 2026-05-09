@@ -13,6 +13,7 @@ export const CompanyDetail = () => {
   const [company, setCompany] = useState(null)
   const [tussles, setTussles] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [showTussleModal, setShowTussleModal] = useState(false)
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export const CompanyDetail = () => {
 
   const fetchCompanyData = async () => {
     try {
+      setError(null)
       // Fetch company
       const { data: companyData, error: companyError } = await supabase
         .from('companies')
@@ -47,6 +49,7 @@ export const CompanyDetail = () => {
       setTussles(tusslesData || [])
     } catch (error) {
       console.error('Error fetching company data:', error)
+      setError(error?.message || 'Failed to load company details')
     } finally {
       setLoading(false)
     }
@@ -57,6 +60,23 @@ export const CompanyDetail = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="glass-panel p-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="text-red-400 text-lg mb-4">⚠️ Error</div>
+          <p className="text-white mb-6">{error}</p>
+          <button
+            onClick={() => navigate('/companies')}
+            className="px-6 py-2 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl"
+          >
+            Back to Companies
+          </button>
         </div>
       </div>
     )

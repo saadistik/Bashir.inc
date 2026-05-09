@@ -8,6 +8,7 @@ import { formatCurrency } from '../lib/utils'
 export const Workers = () => {
   const [workers, setWorkers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -16,6 +17,7 @@ export const Workers = () => {
 
   const fetchWorkers = async () => {
     try {
+      setError(null)
       const { data, error } = await supabase
         .from('workers')
         .select(`
@@ -49,6 +51,7 @@ export const Workers = () => {
       setWorkers(workersWithStats)
     } catch (error) {
       console.error('Error fetching workers:', error)
+      setError(error?.message || 'Failed to load workers')
     } finally {
       setLoading(false)
     }
@@ -59,6 +62,23 @@ export const Workers = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="glass-panel p-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="text-red-400 text-lg mb-4">⚠️ Error</div>
+          <p className="text-white mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl"
+          >
+            Retry
+          </button>
         </div>
       </div>
     )

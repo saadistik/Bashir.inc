@@ -11,6 +11,7 @@ export const Calendar = () => {
   const [events, setEvents] = useState([])
   const [tussleDeadlines, setTussleDeadlines] = useState([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [selectedDate, setSelectedDate] = useState(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
   const location = useLocation()
@@ -22,6 +23,7 @@ export const Calendar = () => {
 
   const fetchCalendarData = async () => {
     try {
+      setError(null)
       // Fetch calendar events
       const { data: eventsData, error: eventsError } = await supabase
         .from('events')
@@ -49,6 +51,7 @@ export const Calendar = () => {
       setTussleDeadlines(tusslesData || [])
     } catch (error) {
       console.error('Error fetching calendar data:', error)
+      setError(error?.message || 'Failed to load calendar data')
     } finally {
       setLoading(false)
     }
@@ -75,6 +78,23 @@ export const Calendar = () => {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="glass-panel p-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="glass-panel p-8 max-w-md w-full text-center">
+          <div className="text-red-400 text-lg mb-4">⚠️ Error</div>
+          <p className="text-white mb-6">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-gradient-to-r from-nature-teal to-nature-mint text-white font-semibold rounded-xl"
+          >
+            Retry
+          </button>
         </div>
       </div>
     )
